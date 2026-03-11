@@ -327,7 +327,7 @@ body.light-mode .toast{background:#fff;color:#16a34a}
     <div class="modal-body">
       <div id="cert-preview-content"></div>
       <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap">
-        <button class="btn btn-primary" onclick="downloadCertPDF()" id="pdf-download-btn">⬇ Download PDF</button>
+        <button class="btn btn-primary" onclick="downloadCertPDF()" id="pdf-download-btn" style="display:none">⬇ Download PDF</button>
         <button class="btn btn-ghost" onclick="printCertificate()">🖨 Print</button>
         <button id="modal-email-btn" class="btn btn-ghost" style="display:none" onclick="emailCertToStudent()">📧 Email Cert to Student</button>
         <button class="btn btn-ghost" onclick="notifyInstructor()">📨 Notify Instructor</button>
@@ -563,29 +563,81 @@ body.light-mode .toast{background:#fff;color:#16a34a}
 
 <script>
 // ═══════════════════════════════════════════════════════════════════
-// localStorage POLYFILL for window.storage
-// Replaces Claude's artifact-only storage API so the file works
-// when hosted on Netlify or any static server.
-// shared=true keys are prefixed 'sh:' ; personal keys prefixed 'ps:'
+// STORAGE ENGINE — Firebase RTDB REST + localStorage fallback
+// shared=true  → Firebase (cross-device) with localStorage backup
+// shared=false → localStorage only (personal/session data)
+//
+// SETUP: In Instructor Dashboard → Settings → paste Firebase URL
+// Firebase rules must be: { ".read": true, ".write": true }
 // ═══════════════════════════════════════════════════════════════════
+window._fbUrl = localStorage.getItem('mold_firebase_url') || null;
+
 window.storage = {
   _pre(shared){ return shared ? 'mold_sh:' : 'mold_ps:'; },
-  set(key, value, shared=false){
-    try{ localStorage.setItem(this._pre(shared)+key, value); return {key,value,shared}; }
-    catch(e){ console.warn('storage.set failed',e); return null; }
+
+  // 'section:subkey' → 'section/subkey' for Firebase path
+  _fbPath(key){
+    const i = key.indexOf(':');
+    return i === -1 ? key : key.substring(0,i) + '/' + key.substring(i+1);
   },
-  get(key, shared=false){
+
+  async set(key, value, shared=false){
+    if(shared && window._fbUrl){
+      try{
+        const r = await fetch(`${window._fbUrl}/mold/${this._fbPath(key)}.json`, {
+          method:'PUT', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify(value)
+        });
+        if(r.ok){ localStorage.setItem(this._pre(shared)+key, value); return {key,value,shared}; }
+      }catch(e){ console.warn('[storage] Firebase set failed, localStorage fallback',e); }
+    }
+    try{ localStorage.setItem(this._pre(shared)+key, value); return {key,value,shared}; }
+    catch(e){ console.warn('[storage] set failed',e); return null; }
+  },
+
+  async get(key, shared=false){
+    if(shared && window._fbUrl){
+      try{
+        const r = await fetch(`${window._fbUrl}/mold/${this._fbPath(key)}.json`);
+        if(r.ok){
+          const v = await r.json();
+          if(v !== null && v !== undefined){
+            const val = typeof v === 'string' ? v : JSON.stringify(v);
+            return {key, value:val, shared};
+          }
+        }
+      }catch(e){ console.warn('[storage] Firebase get failed, localStorage fallback',e); }
+    }
     try{
       const v = localStorage.getItem(this._pre(shared)+key);
       if(v===null) throw new Error('Key not found: '+key);
       return {key, value:v, shared};
     } catch(e){ throw e; }
   },
-  delete(key, shared=false){
+
+  async delete(key, shared=false){
+    if(shared && window._fbUrl){
+      try{ await fetch(`${window._fbUrl}/mold/${this._fbPath(key)}.json`, {method:'DELETE'}); }
+      catch(e){ console.warn('[storage] Firebase delete failed',e); }
+    }
     try{ localStorage.removeItem(this._pre(shared)+key); return {key,deleted:true,shared}; }
     catch(e){ return null; }
   },
-  list(prefix='', shared=false){
+
+  async list(prefix='', shared=false){
+    if(shared && window._fbUrl){
+      try{
+        const section = prefix.replace(/:$/, '');
+        const r = await fetch(`${window._fbUrl}/mold/${section}.json`);
+        if(r.ok){
+          const data = await r.json();
+          if(data && typeof data === 'object'){
+            return {keys: Object.keys(data).map(k => prefix + k), prefix, shared};
+          }
+          return {keys:[], prefix, shared};
+        }
+      }catch(e){ console.warn('[storage] Firebase list failed, localStorage fallback',e); }
+    }
     try{
       const pre = this._pre(shared);
       const fullPre = pre + prefix;
@@ -814,6 +866,16 @@ async function beginCourse(){
     try{const r=await window.storage.get('class:'+classId,true);if(r)state.currentClass=JSON.parse(r.value);}
     catch(e){state.currentClass={id:classId,number:'?',name:'Class',date:'?'};}
   }
+  // Log new login for instructor dashboard
+  try{
+    const loginKey='newlogin:'+Date.now()+'-'+name.replace(/\s+/g,'_').substring(0,20);
+    await window.storage.set(loginKey, JSON.stringify({
+      name, email:email||'',
+      classId, classNumber:state.currentClass?.number||'N/A',
+      className:state.currentClass?.name||'',
+      timestamp:new Date().toISOString(), seen:false
+    }), true);
+  }catch(e){}
   showToast(`Welcome, ${name}! 🌿`);
   goHome();
 }
@@ -1844,19 +1906,27 @@ async function renderOverviewTab(el){
 
 async function renderActiveTab(el){
   el.innerHTML='<div style="text-align:center;padding:24px;color:var(--t400);font-family:var(--mono);font-size:12px">Loading...</div>';
-  let sessions=[];
+  let sessions=[],logins=[];
   try{
     const keys=await window.storage.list('active:',true);
     if(keys&&keys.keys){const now=Date.now();for(const k of keys.keys){try{const r=await window.storage.get(k,true);if(r){const d=JSON.parse(r.value);const age=(now-new Date(d.lastSeen).getTime())/60000;if(age<5)sessions.push({...d,ageMin:Math.round(age)});}}catch(e){}}}
   }catch(e){}
+  try{
+    const lkeys=await window.storage.list('newlogin:',true);
+    const cutoff=Date.now()-24*60*60*1000;
+    if(lkeys&&lkeys.keys){for(const k of lkeys.keys){try{const r=await window.storage.get(k,true);if(r){const d=JSON.parse(r.value);if(new Date(d.timestamp).getTime()>cutoff)logins.push(d);}}catch(e){}}}
+  }catch(e){}
+  logins.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
   sessions.sort((a,b)=>new Date(b.lastSeen)-new Date(a.lastSeen));
+  const unseenCount=logins.filter(l=>!l.seen).length;
   clearInterval(activeRefreshInterval);
   activeRefreshInterval=setInterval(()=>{if(adminTab==='active')renderActiveTab(document.getElementById('admin-tab-content'));},30000);
   el.innerHTML=`
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+  <!-- LIVE NOW -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
     <div>
       <div style="font-size:15px;font-weight:600;color:var(--t100)">Live Student Activity</div>
-      <div style="font-family:var(--mono);font-size:11px;color:var(--t500);margin-top:2px">Active within the last 5 minutes · auto-refreshes every 30s</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--t500);margin-top:2px">Active within the last 5 minutes · auto-refreshes every 30s${window._fbUrl?'':' · <span style="color:var(--a400)">⚠ Firebase not configured — only shows this device</span>'}</div>
     </div>
     <div style="display:flex;align-items:center;gap:8px">
       <div style="width:7px;height:7px;border-radius:50%;background:${sessions.length>0?'var(--g500)':'var(--t600)'}"></div>
@@ -1864,11 +1934,11 @@ async function renderActiveTab(el){
       <button class="btn btn-ghost btn-sm" onclick="switchAdminTab('active')">↻ Refresh</button>
     </div>
   </div>
-  ${sessions.length===0?`<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:48px;text-align:center">
+  ${sessions.length===0?`<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:36px;text-align:center;margin-bottom:24px">
     <div style="font-size:28px;margin-bottom:8px;opacity:0.3">👥</div>
     <div style="font-family:var(--mono);font-size:12px;color:var(--t500)">No students currently active.</div>
   </div>`:`
-  <div style="display:flex;flex-direction:column;gap:8px">
+  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:24px">
   ${sessions.map(s=>`
     <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
       <div style="display:flex;align-items:center;gap:10px;min-width:0">
@@ -1890,7 +1960,47 @@ async function renderActiveTab(el){
       </div>
     </div>
   `).join('')}
-  </div>`}`;
+  </div>`}
+
+  <!-- NEW SIGN-INS (last 24h) -->
+  <div style="border-top:1px solid var(--border);padding-top:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="font-size:14px;font-weight:600;color:var(--t100)">New Sign-Ins <span style="font-family:var(--mono);font-size:11px;color:var(--t500)">(last 24h)</span></div>
+        ${unseenCount>0?`<span style="background:var(--r500);color:#fff;font-family:var(--mono);font-size:9px;font-weight:700;padding:2px 7px;border-radius:99px">${unseenCount} new</span>`:''}
+      </div>
+      ${logins.length>0?`<button class="btn btn-ghost btn-sm" onclick="markAllLoginsSeen()">✓ Mark all seen</button>`:''}
+    </div>
+    ${logins.length===0?`<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:28px;text-align:center">
+      <div style="font-family:var(--mono);font-size:12px;color:var(--t500)">No sign-ins in the last 24 hours.</div>
+    </div>`:`
+    <div style="display:flex;flex-direction:column;gap:6px">
+    ${logins.map(l=>`
+      <div style="background:var(--bg3);border:1px solid ${l.seen?'var(--border)':'var(--border-g)'};border-radius:var(--radius);padding:11px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <div style="display:flex;align-items:center;gap:10px;min-width:0">
+          ${!l.seen?'<div style="width:7px;height:7px;border-radius:50%;background:var(--g500);flex-shrink:0"></div>':'<div style="width:7px;height:7px;flex-shrink:0"></div>'}
+          <div>
+            <div style="font-size:13px;font-weight:${l.seen?'500':'700'};color:${l.seen?'var(--t300)':'var(--t100)'};">${l.name}${l.email?` <span style="font-size:10px;font-family:var(--mono);color:var(--t500);font-weight:400">&lt;${l.email}&gt;</span>`:''}</div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--t500);margin-top:1px"><span style="color:var(--a400)">${l.classNumber||'N/A'}</span>${l.className?' · '+l.className:''} · ${new Date(l.timestamp).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}</div>
+          </div>
+        </div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--t500)">${new Date(l.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>
+      </div>
+    `).join('')}
+    </div>`}
+  </div>`;
+}
+
+async function markAllLoginsSeen(){
+  try{
+    const lkeys=await window.storage.list('newlogin:',true);
+    if(lkeys&&lkeys.keys){
+      for(const k of lkeys.keys){
+        try{const r=await window.storage.get(k,true);if(r){const d=JSON.parse(r.value);if(!d.seen){d.seen=true;await window.storage.set(k,JSON.stringify(d),true);}}}catch(e){}
+      }
+    }
+  }catch(e){}
+  switchAdminTab('active');
 }
 
 async function renderResultsTab(el){
@@ -1980,6 +2090,7 @@ async function renderClassesTab(el){
             <div style="font-size:13px;font-weight:600;color:var(--t100)">${c.name}</div>
             <div style="font-family:var(--mono);font-size:10px;color:var(--t500);margin-top:2px">${c.date}${c.desc?` · ${c.desc}`:''}</div>
           </div>
+          <button class="btn btn-ghost btn-sm" onclick="editClass('${c.id}')">Edit</button>
           <button class="btn btn-danger btn-sm" onclick="deleteClass('${c.id}')">Delete</button>
         </div>`}).join('')}
       </div>`}
@@ -1993,9 +2104,29 @@ async function createClass(){
   const date=document.getElementById('new-class-date')?.value;
   const desc=document.getElementById('new-class-desc')?.value.trim();
   if(!num||!name||!date){alert('Class Number, Name, and Date are required.');return;}
-  const id='class-'+Date.now().toString(36);
-  try{await window.storage.set('class:'+id,JSON.stringify({id,number:num,name,date,desc:desc||''}),true);await loadLoginClasses();showToast('Class created!');switchAdminTab('classes');}
+  const isEdit=!!window._editingClassId;
+  const id=window._editingClassId||'class-'+Date.now().toString(36);
+  window._editingClassId=null;
+  try{await window.storage.set('class:'+id,JSON.stringify({id,number:num,name,date,desc:desc||''}),true);await loadLoginClasses();showToast(isEdit?'Class updated!':'Class created!');switchAdminTab('classes');}
   catch(e){alert('Failed to save class.');}
+}
+async function editClass(id){
+  try{
+    const r=await window.storage.get('class:'+id,true);if(!r)return;
+    const c=JSON.parse(r.value);
+    const numEl=document.getElementById('new-class-num');
+    const nameEl=document.getElementById('new-class-name');
+    const dateEl=document.getElementById('new-class-date');
+    const descEl=document.getElementById('new-class-desc');
+    const btn=document.querySelector('button[onclick="createClass()"]');
+    if(numEl)numEl.value=c.number;
+    if(nameEl)nameEl.value=c.name;
+    if(dateEl)dateEl.value=c.date;
+    if(descEl)descEl.value=c.desc||'';
+    if(btn)btn.textContent='✓ Update Class';
+    window._editingClassId=id;
+    if(numEl)numEl.scrollIntoView({behavior:'smooth'});numEl?.focus();
+  }catch(e){}
 }
 async function deleteClass(id){
   if(!confirm('Delete this class?'))return;
@@ -2049,6 +2180,9 @@ function previewCertFromAdmin(r){
   const origName=state.studentName,origResult=state.lastExamResult,origClass=state.currentClass;
   state.studentName=r.name;state.lastExamResult=r;state.currentClass={number:r.classNumber,name:r.className};
   openCertModal();
+  // Show download btn for instructor only
+  const dlBtn=document.getElementById('pdf-download-btn');
+  if(dlBtn) dlBtn.style.display='inline-flex';
   // After modal opens, update the email btn to show student email
   const emailBtn=document.getElementById('modal-email-btn');
   if(emailBtn) emailBtn.style.display=r.email?'inline-flex':'none';
@@ -2056,6 +2190,8 @@ function previewCertFromAdmin(r){
   const origClose=window._adminCertClose;
   window._adminCertRestoreState=()=>{
     state.studentName=origName;state.lastExamResult=origResult;state.currentClass=origClass;
+    const dlBtn=document.getElementById('pdf-download-btn');
+    if(dlBtn) dlBtn.style.display='none';
   };
 }
 
@@ -2092,6 +2228,15 @@ async function renderSettingsTab(el){
   }catch(e){}
   el.innerHTML=`
   <div style="max-width:500px;display:flex;flex-direction:column;gap:20px">
+    <div style="background:var(--bg3);border:1px solid var(--border-g);border-radius:var(--radius);padding:20px">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--g500);margin-bottom:12px">🔥 Firebase — Cross-Device Live Tracking</div>
+      <p style="font-size:12px;color:var(--t400);margin-bottom:12px">Required to see students from other computers. <a href="https://console.firebase.google.com" target="_blank" style="color:var(--g400)">Create a free Firebase project</a> → Realtime Database → set rules to <code style="background:var(--bg2);padding:1px 5px;border-radius:3px;font-size:11px">{".read":true,".write":true}</code> → copy the URL below.</p>
+      <div style="display:flex;gap:10px;align-items:flex-end">
+        <div style="flex:1"><label class="field-label">Database URL</label><input class="field-input" id="set-fb-url" type="url" placeholder="https://your-project-default-rtdb.firebaseio.com" value="${window._fbUrl||''}"></div>
+        <button class="btn btn-primary btn-sm" onclick="saveFirebaseUrl()">Save</button>
+      </div>
+      <div style="font-family:var(--mono);font-size:11px;margin-top:8px;color:${window._fbUrl?'var(--g400)':'var(--a400)'}">${window._fbUrl?'✓ Connected — cross-device sync active':'⚠ Not configured — live tracking only shows this browser'}</div>
+    </div>
     <div style="background:var(--bg3);border:1px solid var(--border-g);border-radius:var(--radius);padding:20px">
       <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--g500);margin-bottom:12px">📧 Results Notification Email</div>
       <div style="display:flex;gap:10px;align-items:flex-end">
@@ -2144,8 +2289,16 @@ async function saveSetting(key,inputId,msg){
   try{await window.storage.set(key,val,true);showToast(msg);switchAdminTab('settings');}catch(e){alert('Failed to save.');}
 }
 
-async function saveEmailJSSettings(){
-  const svc=document.getElementById('set-ejs-service')?.value.trim();
+function saveFirebaseUrl(){
+  const url=document.getElementById('set-fb-url')?.value.trim();
+  if(!url){alert('Please enter the Firebase Database URL.');return;}
+  localStorage.setItem('mold_firebase_url',url);
+  window._fbUrl=url;
+  showToast('Firebase connected! Cross-device sync is now active. 🔥');
+  switchAdminTab('settings');
+}
+
+async function saveEmailJSSettings(){  const svc=document.getElementById('set-ejs-service')?.value.trim();
   const tmpl=document.getElementById('set-ejs-template')?.value.trim();
   const key=document.getElementById('set-ejs-key')?.value.trim();
   if(!svc||!tmpl||!key){alert('Please fill in all three EmailJS fields.');return;}
