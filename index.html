@@ -314,6 +314,50 @@ body.light-mode .toast{background:#fff;color:#16a34a}
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
+<!-- SCORE EDITOR MODAL -->
+<div class="modal-overlay" id="score-editor-modal">
+  <div class="modal-box" style="max-width:420px">
+    <div class="modal-header">
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--g500);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px">Instructor Override</div>
+        <div style="font-size:14px;font-weight:600;color:var(--t100)" id="score-editor-title">Edit Student Record</div>
+      </div>
+      <button class="modal-close" onclick="closeScoreEditor()">✕ Close</button>
+    </div>
+    <div class="modal-body" style="padding:20px">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="background:var(--bg3);border:1px solid var(--border-g);border-radius:var(--radius);padding:12px 14px;font-size:12px;color:var(--t400)">
+          Changes apply immediately and update the certificate record if the student passes.
+        </div>
+        <div>
+          <label class="field-label">Score (correct answers out of <span id="se-total">30</span>)</label>
+          <input class="field-input" id="se-score" type="number" min="0" max="30" placeholder="e.g. 24" oninput="updateScorePreview()">
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:13px;color:var(--t300)">Calculated %</span>
+          <span id="se-pct-preview" style="font-family:var(--mono);font-size:1.3rem;font-weight:700;color:var(--g400)">—</span>
+        </div>
+        <div>
+          <label class="field-label">Override Result</label>
+          <select class="field-input" id="se-passed" style="cursor:pointer">
+            <option value="auto">Auto (based on score ≥ 75%)</option>
+            <option value="pass">Force PASS</option>
+            <option value="fail">Force FAIL</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label">Note (optional — stored with record)</label>
+          <input class="field-input" id="se-note" type="text" placeholder="e.g. Instructor manual override — attended makeup">
+        </div>
+        <div style="display:flex;gap:10px;padding-top:4px">
+          <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="saveScoreOverride()">✓ Save Override</button>
+          <button class="btn btn-ghost" onclick="closeScoreEditor()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- CERT PREVIEW MODAL -->
 <div class="modal-overlay" id="cert-modal">
   <div class="modal-box">
@@ -1280,6 +1324,7 @@ function closeCertModal(){
   if(window._adminCertRestoreState){window._adminCertRestoreState();window._adminCertRestoreState=null;}
 }
 document.getElementById('cert-modal').addEventListener('click',function(e){if(e.target===this)closeCertModal();});
+document.getElementById('score-editor-modal').addEventListener('click',function(e){if(e.target===this)closeScoreEditor();});
 
 function printCertificate(){
   const r=state.lastExamResult||{};const cls=state.currentClass||{};
@@ -2023,7 +2068,7 @@ async function renderResultsTab(el){
     <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
   </div>
   ${filtered.length===0?`<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:40px;text-align:center"><div style="font-family:var(--mono);font-size:12px;color:var(--t500)">No results found.</div></div>`:`
-  <div class="table-scroll"><table class="data-table"><thead><tr><th>#</th><th>Student</th><th>Class</th><th>Score</th><th>%</th><th>Result</th><th>Date</th></tr></thead><tbody>
+  <div class="table-scroll"><table class="data-table"><thead><tr><th>#</th><th>Student</th><th>Class</th><th>Score</th><th>%</th><th>Result</th><th>Date</th><th>Actions</th></tr></thead><tbody>
   ${filtered.map((r,i)=>`<tr>
     <td style="font-family:var(--mono);font-size:11px;color:var(--t500)">${i+1}</td>
     <td style="color:var(--t100);font-weight:600">${r.name||'—'}<br><span style="font-family:var(--mono);font-size:10px;color:var(--t500)">${r.email||''}</span></td>
@@ -2033,6 +2078,10 @@ async function renderResultsTab(el){
     <span style="font-family:var(--mono);font-size:12px;color:${r.pct>=75?'var(--g400)':'var(--r400)'};font-weight:600">${r.pct}%</span></div></td>
     <td><span class="badge ${r.passed?'badge-green':'badge-red'}">${r.passed?'✓ PASS':'✗ FAIL'}</span></td>
     <td style="font-family:var(--mono);font-size:10px;color:var(--t500)">${new Date(r.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</td>
+    <td style="white-space:nowrap">
+      <button class="btn btn-ghost btn-sm" style="margin-right:4px" onclick="openScoreEditor(${JSON.stringify(r).replace(/"/g,'&quot;')})">✏ Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteStudentRecord(${JSON.stringify(r).replace(/"/g,'&quot;')})">✕</button>
+    </td>
   </tr>`).join('')}
   </tbody></table></div>
   <div style="margin-top:12px;padding:12px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
@@ -2054,6 +2103,109 @@ async function confirmClearScores(){
   if(!confirm('Clear ALL exam results? This cannot be undone.'))return;
   try{const keys=await window.storage.list('score:',true);if(keys&&keys.keys){for(const k of keys.keys){try{await window.storage.delete(k,true);}catch(e){}}}}catch(e){}
   window._allRecords=[];showToast('All results cleared.');switchAdminTab('results');
+}
+
+// ── SCORE OVERRIDE ──────────────────────────────────────────────────
+window._editingRecord=null;
+
+function openScoreEditor(r){
+  window._editingRecord=r;
+  document.getElementById('score-editor-title').textContent=`Edit: ${r.name}`;
+  document.getElementById('se-total').textContent=r.total||30;
+  const scoreEl=document.getElementById('se-score');
+  scoreEl.max=r.total||30;
+  scoreEl.value=r.score||'';
+  document.getElementById('se-passed').value='auto';
+  document.getElementById('se-note').value=r.overrideNote||'';
+  updateScorePreview();
+  document.getElementById('score-editor-modal').classList.add('show');
+}
+
+function closeScoreEditor(){
+  document.getElementById('score-editor-modal').classList.remove('show');
+  window._editingRecord=null;
+}
+
+function updateScorePreview(){
+  const r=window._editingRecord;if(!r)return;
+  const total=r.total||30;
+  const score=parseInt(document.getElementById('se-score').value,10);
+  if(isNaN(score)){document.getElementById('se-pct-preview').textContent='—';document.getElementById('se-pct-preview').style.color='var(--t500)';return;}
+  const pct=Math.round((score/total)*100);
+  const el=document.getElementById('se-pct-preview');
+  el.textContent=pct+'%';
+  el.style.color=pct>=75?'var(--g400)':'var(--r400)';
+}
+
+async function saveScoreOverride(){
+  const r=window._editingRecord;if(!r)return;
+  const total=r.total||30;
+  const newScore=parseInt(document.getElementById('se-score').value,10);
+  if(isNaN(newScore)||newScore<0||newScore>total){alert(`Score must be between 0 and ${total}.`);return;}
+  const newPct=Math.round((newScore/total)*100);
+  const passedSel=document.getElementById('se-passed').value;
+  const newPassed=passedSel==='pass'?true:passedSel==='fail'?false:newPct>=75;
+  const note=document.getElementById('se-note').value.trim();
+
+  // Find and update score record
+  const updated={...r, score:newScore, pct:newPct, passed:newPassed, overrideNote:note||undefined, overriddenAt:new Date().toISOString()};
+  try{
+    const keys=await window.storage.list('score:',true);
+    if(keys&&keys.keys){
+      for(const k of keys.keys){
+        try{
+          const res=await window.storage.get(k,true);
+          if(res){
+            const d=JSON.parse(res.value);
+            if(d.certId===r.certId&&d.timestamp===r.timestamp){
+              await window.storage.set(k,JSON.stringify(updated),true);
+              break;
+            }
+          }
+        }catch(e){}
+      }
+    }
+  }catch(e){}
+
+  // Update or create/delete cert record
+  if(r.certId){
+    if(newPassed){
+      await window.storage.set('cert:'+r.certId,JSON.stringify(updated),true);
+    } else {
+      // Remove cert if now failed
+      try{await window.storage.delete('cert:'+r.certId,true);}catch(e){}
+    }
+  } else if(newPassed){
+    // Create cert for newly-passed record
+    const certId='CERT-'+Date.now().toString(36).toUpperCase();
+    updated.certId=certId;
+    await window.storage.set('cert:'+certId,JSON.stringify(updated),true);
+  }
+
+  closeScoreEditor();
+  showToast(`✓ ${r.name}'s record updated`);
+  switchAdminTab('results');
+}
+
+async function deleteStudentRecord(r){
+  if(!confirm(`Delete ${r.name}'s exam record? This also removes their certificate.`))return;
+  try{
+    const keys=await window.storage.list('score:',true);
+    if(keys&&keys.keys){
+      for(const k of keys.keys){
+        try{
+          const res=await window.storage.get(k,true);
+          if(res){const d=JSON.parse(res.value);if(d.certId===r.certId&&d.timestamp===r.timestamp){await window.storage.delete(k,true);break;}}
+        }catch(e){}
+      }
+    }
+  }catch(e){}
+  if(r.certId){
+    try{await window.storage.delete('cert:'+r.certId,true);}catch(e){}
+    try{await window.storage.delete('notify:'+r.certId,true);}catch(e){}
+  }
+  showToast(`${r.name}'s record deleted.`);
+  switchAdminTab('results');
 }
 
 async function renderClassesTab(el){
