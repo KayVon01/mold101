@@ -89,6 +89,9 @@ h1,h2{font-family:var(--display);letter-spacing:0.04em}
 .q-feedback.fb-wrong{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:var(--r300)}
 /* TOP NAV */
 .topnav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(7,12,10,0.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);height:56px;display:flex;align-items:center}
+body.impersonating .topnav{top:38px}
+body.impersonating #impersonation-banner{display:flex!important}
+body.impersonating .screen{padding-top:94px}
 .topnav-inner{max-width:960px;margin:0 auto;padding:0 16px;width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .topnav-logo{font-family:var(--mono);font-size:11px;color:var(--g400);letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:8px}
 .topnav-progress{flex:1;max-width:200px}
@@ -398,6 +401,16 @@ body.light-mode .toast{background:#fff;color:#16a34a}
 
 <div id="sidebar-overlay" onclick="closeSidebar()"></div>
 
+<!-- INSTRUCTOR IMPERSONATION BANNER -->
+<div id="impersonation-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(90deg,#92400e,#78350f);border-bottom:2px solid #f59e0b;padding:8px 16px;display:none;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+  <div style="display:flex;align-items:center;gap:10px">
+    <span style="font-size:1rem">🔑</span>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#fde68a;font-weight:700;letter-spacing:0.05em">INSTRUCTOR VIEW</span>
+    <span style="font-size:12px;color:#fcd34d">Viewing as: <strong id="impersonation-name" style="color:#fff"></strong></span>
+  </div>
+  <button onclick="exitImpersonation()" style="background:#f59e0b;color:#1c1917;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:'IBM Plex Mono',monospace;letter-spacing:0.05em">← Return to Dashboard</button>
+</div>
+
 <div class="mobile-lesson-nav" id="mobile-lesson-nav" style="display:none">
   <button class="btn btn-ghost btn-sm" id="mob-btn-prev" onclick="prevLesson()">← Prev</button>
   <span style="font-family:var(--mono);font-size:10px;color:var(--t500)" id="mob-lesson-counter"></span>
@@ -408,25 +421,60 @@ body.light-mode .toast{background:#fff;color:#16a34a}
 <div class="screen active" id="screen-login">
   <div class="login-screen">
     <div class="login-card fade-in">
-      <div style="text-align:center;margin-bottom:28px">
-        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyODAgMzAwIj4KPGRlZnM+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJiZ0ciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgIDxzdG9wIG9mZnNldD0iMCUiICBzdG9wLWNvbG9yPSIjMDcwYzBhIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwZDE1MTAiLz4KICA8L2xpbmVhckdyYWRpZW50PgogIDxsaW5lYXJHcmFkaWVudCBpZD0ibGV0RyIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgIHN0b3AtY29sb3I9IiM0YWRlODAiLz4KICAgIDxzdG9wIG9mZnNldD0iNTUlIiBzdG9wLWNvbG9yPSIjMjJjNTVlIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxNTgwM2QiLz4KICA8L2xpbmVhckdyYWRpZW50PgogIDxsaW5lYXJHcmFkaWVudCBpZD0iaGFuZEciIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgIDxzdG9wIG9mZnNldD0iMCUiICBzdG9wLWNvbG9yPSIjMjJjNTVlIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxNDUzMmQiLz4KICA8L2xpbmVhckdyYWRpZW50PgogIDxsaW5lYXJHcmFkaWVudCBpZD0iYmRyRyIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgIHN0b3AtY29sb3I9IiMyMmM1NWUiLz4KICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzE1ODAzZCIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJydWxlRyIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjAiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgICBzdG9wLWNvbG9yPSJyZ2JhKDM0LDE5Nyw5NCwwKSIvPgogICAgPHN0b3Agb2Zmc2V0PSIyMCUiICBzdG9wLWNvbG9yPSJyZ2JhKDM0LDE5Nyw5NCwwLjcpIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjgwJSIgIHN0b3AtY29sb3I9InJnYmEoMzQsMTk3LDk0LDAuNykiLz4KICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0icmdiYSgzNCwxOTcsOTQsMCkiLz4KICA8L2xpbmVhckdyYWRpZW50PgogIDxmaWx0ZXIgaWQ9ImxnbG93IiB4PSItMzAlIiB5PSItMzAlIiB3aWR0aD0iMTYwJSIgaGVpZ2h0PSIxNjAlIj4KICAgIDxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjIuNSIgcmVzdWx0PSJiIi8+CiAgICA8ZmVDb2xvck1hdHJpeCBpbj0iYiIgdHlwZT0ibWF0cml4IgogICAgICB2YWx1ZXM9IjAgMCAwIDAgMC4xMyAgMCAwIDAgMCAwLjc3ICAwIDAgMCAwIDAuMzcgIDAgMCAwIDAuNSAwIiByZXN1bHQ9ImMiLz4KICAgIDxmZU1lcmdlPjxmZU1lcmdlTm9kZSBpbj0iYyIvPjxmZU1lcmdlTm9kZSBpbj0iU291cmNlR3JhcGhpYyIvPjwvZmVNZXJnZT4KICA8L2ZpbHRlcj4KICA8ZmlsdGVyIGlkPSJoZ2xvdyIgeD0iLTUwJSIgeT0iLTUwJSIgd2lkdGg9IjIwMCUiIGhlaWdodD0iMjAwJSI+CiAgICA8ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSI2IiByZXN1bHQ9ImIiLz4KICAgIDxmZUNvbG9yTWF0cml4IGluPSJiIiB0eXBlPSJtYXRyaXgiCiAgICAgIHZhbHVlcz0iMCAwIDAgMCAwLjA4ICAwIDAgMCAwIDAuNTUgIDAgMCAwIDAgMC4yNSAgMCAwIDAgMC40NSAwIiByZXN1bHQ9ImMiLz4KICAgIDxmZU1lcmdlPjxmZU1lcmdlTm9kZSBpbj0iYyIvPjxmZU1lcmdlTm9kZSBpbj0iU291cmNlR3JhcGhpYyIvPjwvZmVNZXJnZT4KICA8L2ZpbHRlcj4KPC9kZWZzPgoKPCEtLSBCQUNLR1JPVU5EIC0tPgo8cmVjdCB3aWR0aD0iMjgwIiBoZWlnaHQ9IjMwMCIgcng9IjE2IiBmaWxsPSJ1cmwoI2JnRykiLz4KPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjI3NiIgaGVpZ2h0PSIyOTYiIHJ4PSIxNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ1cmwoI2JkckcpIiBzdHJva2Utd2lkdGg9IjEuNSIgb3BhY2l0eT0iMC41NSIvPgo8cmVjdCB4PSI3IiB5PSI3IiB3aWR0aD0iMjY2IiBoZWlnaHQ9IjI4NiIgcng9IjEwIiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMzQsMTk3LDk0LDAuMDgpIiBzdHJva2Utd2lkdGg9IjEiLz4KCjwhLS0gVlBIIExFVFRFUlMgLS0+CjxnIGZpbHRlcj0idXJsKCNsZ2xvdykiPgoKICA8IS0tIFYgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSIxOCwzNSAzMywzNSA2OCwxMTggMTAzLDM1IDExOCwzNSA3NiwxMjggNjAsMTI4IiBmaWxsPSJ1cmwoI2xldEcpIi8+CgogIDwhLS0gUDogc3RlbSArIGJvd2wsIGV2ZW5vZGQgcHVuY2hlcyB0aGUgY291bnRlciAtLT4KICA8cGF0aCBmaWxsPSJ1cmwoI2xldEcpIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9IgogICAgTSAxMzAsMzUgTCAxNDQsMzUgTCAxNDQsMTI4IEwgMTMwLDEyOCBaCiAgICBNIDE0NCwzNSBRIDE2NSwzNSAxNzgsNDYgUSAxOTQsNjAgMTk0LDY2IFEgMTk0LDkwIDE3MCw5MyBRIDE1Nyw5NSAxNDQsOTUgTCAxNDQsMzUgWgogICAgTSAxNDgsNDkgUSAxNjMsNDkgMTczLDU3IFEgMTgxLDY0IDE4MSw2OCBRIDE4MSw4MCAxNjYsODIgUSAxNTcsODMgMTQ4LDgzIFoKICAiLz4KCiAgPCEtLSBIIC0tPgogIDxyZWN0IHg9IjIwMiIgeT0iMzUiIHdpZHRoPSIxNCIgaGVpZ2h0PSI5MyIgcng9IjEiIGZpbGw9InVybCgjbGV0RykiLz4KICA8cmVjdCB4PSIyNDgiIHk9IjM1IiB3aWR0aD0iMTQiIGhlaWdodD0iOTMiIHJ4PSIxIiBmaWxsPSJ1cmwoI2xldEcpIi8+CiAgPHJlY3QgeD0iMjAyIiB5PSI3NCIgIHdpZHRoPSI2MCIgaGVpZ2h0PSIxNCIgcng9IjEiIGZpbGw9InVybCgjbGV0RykiLz4KCjwvZz4KCjwhLS0gUlVMRSAtLT4KPHJlY3QgeD0iMTgiIHk9IjE0MCIgd2lkdGg9IjI0NCIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI3J1bGVHKSIvPgoKPCEtLSBDT01QQU5ZIE5BTUUgLS0+Cjx0ZXh0IHg9IjE0MCIgeT0iMTU4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIgogIGZvbnQtZmFtaWx5PSInSUJNIFBsZXggTW9ubycsIG1vbm9zcGFjZSIKICBmb250LXNpemU9IjkuNSIgZm9udC13ZWlnaHQ9IjcwMCIgbGV0dGVyLXNwYWNpbmc9IjIiCiAgZmlsbD0iIzIyYzU1ZSIgb3BhY2l0eT0iMC45Ij5WQVVHSE4tUE9SVEVSPC90ZXh0Pgo8dGV4dCB4PSIxNDAiIHk9IjE3MiIgdGV4dC1hbmNob3I9Im1pZGRsZSIKICBmb250LWZhbWlseT0iJ0lCTSBQbGV4IE1vbm8nLCBtb25vc3BhY2UiCiAgZm9udC1zaXplPSI3LjgiIGZvbnQtd2VpZ2h0PSI1MDAiIGxldHRlci1zcGFjaW5nPSIyLjUiCiAgZmlsbD0iIzRhZGU4MCIgb3BhY2l0eT0iMC40NSI+SE9MRElOR1MgIExMQzwvdGV4dD4KCjwhLS0KICBIQU5EIFBBVEggIChsb2NhbCBzcGFjZSwgcGFsbSBhdCB5PTAsIGZpbmdlcnMgZXh0ZW5kIHRvIC15KQogIFBpbmt5IHNob3J0ZXN0ICg0NCksIFJpbmcgKDYyKSwgTWlkZGxlIHRhbGxlc3QgKDcyKSwgSW5kZXggKDU4KSwgVGh1bWIgb24gcmlnaHQgc2lkZS4KICBMZWZ0IGhhbmQ6ICB0cmFuc2xhdGUoNzgsMjY4KSByb3RhdGUoLTI4KQogIFJpZ2h0IGhhbmQ6IHRyYW5zbGF0ZSgyMDIsMjY4KSBzY2FsZSgtMSwxKSByb3RhdGUoLTI4KQotLT4KCjwhLS0gTEVGVCBIQU5EIC0tPgo8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg3OCwyNjgpIHJvdGF0ZSgtMjgpIiBmaWx0ZXI9InVybCgjaGdsb3cpIj4KPHBhdGggZmlsbD0idXJsKCNoYW5kRykiIGQ9IgogIE0gLTI3LDI0CiAgQyAtMzEsMjQgLTMzLDE3IC0zMyw5IEMgLTMzLDMgLTMwLC0zIC0yNywtNwogIEMgLTI3LC0xMSAtMjYsLTQwIC0yMywtNDUgQyAtMjEsLTUyIC0xNCwtNTIgLTEyLC00NSBDIC0xMCwtNDAgLTEwLC0xMyAtMTEsLTcKICBDIC0xMCwtMTMgLTgsLTE2IC03LC0xNiBDIC03LC0yMSAtNiwtNTggLTQsLTYzIEMgLTIsLTcwIDQsLTcwIDYsLTYzIEMgOCwtNTggOCwtMjEgNywtMTYKICBDIDcsLTIwIDksLTIxIDExLC0yMSBDIDExLC0yNSAxMSwtNjYgMTQsLTcyIEMgMTYsLTc5IDIyLC03OSAyNCwtNzIgQyAyNiwtNjYgMjYsLTI1IDI1LC0yMQogIEMgMjUsLTI0IDI3LC0yMyAyOCwtMjEgQyAyOCwtMjUgMjgsLTU0IDMxLC01OSBDIDMzLC02NSAzOCwtNjUgNDAsLTU5IEMgNDIsLTU0IDQyLC0yMyA0MSwtMTcKICBDIDQzLC05IDQ1LDQgNDIsMTQgQyA0MCwyMiAzMywyNCAyOCwyNAogIEMgMjksMjcgNDEsMzYgNDUsMjggQyA1MSwxOCA0OCw1IDQxLDMgQyAzOCwyIDM2LDQgMzUsOSBDIDM0LDE0IDM2LDIwIDMzLDI0CiAgQyAxMywyNiAtNywyNiAtMjcsMjQgWgoiLz4KPC9nPgoKPCEtLSBSSUdIVCBIQU5EIChtaXJyb3JlZCkgLS0+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDIwMiwyNjgpIHNjYWxlKC0xLDEpIHJvdGF0ZSgtMjgpIiBmaWx0ZXI9InVybCgjaGdsb3cpIj4KPHBhdGggZmlsbD0idXJsKCNoYW5kRykiIGQ9IgogIE0gLTI3LDI0CiAgQyAtMzEsMjQgLTMzLDE3IC0zMyw5IEMgLTMzLDMgLTMwLC0zIC0yNywtNwogIEMgLTI3LC0xMSAtMjYsLTQwIC0yMywtNDUgQyAtMjEsLTUyIC0xNCwtNTIgLTEyLC00NSBDIC0xMCwtNDAgLTEwLC0xMyAtMTEsLTcKICBDIC0xMCwtMTMgLTgsLTE2IC03LC0xNiBDIC03LC0yMSAtNiwtNTggLTQsLTYzIEMgLTIsLTcwIDQsLTcwIDYsLTYzIEMgOCwtNTggOCwtMjEgNywtMTYKICBDIDcsLTIwIDksLTIxIDExLC0yMSBDIDExLC0yNSAxMSwtNjYgMTQsLTcyIEMgMTYsLTc5IDIyLC03OSAyNCwtNzIgQyAyNiwtNjYgMjYsLTI1IDI1LC0yMQogIEMgMjUsLTI0IDI3LC0yMyAyOCwtMjEgQyAyOCwtMjUgMjgsLTU0IDMxLC01OSBDIDMzLC02NSAzOCwtNjUgNDAsLTU5IEMgNDIsLTU0IDQyLC0yMyA0MSwtMTcKICBDIDQzLC05IDQ1LDQgNDIsMTQgQyA0MCwyMiAzMywyNCAyOCwyNAogIEMgMjksMjcgNDEsMzYgNDUsMjggQyA1MSwxOCA0OCw1IDQxLDMgQyAzOCwyIDM2LDQgMzUsOSBDIDM0LDE0IDM2LDIwIDMzLDI0CiAgQyAxMywyNiAtNywyNiAtMjcsMjQgWgoiLz4KPC9nPgoKPCEtLSBDb3JuZXIgYWNjZW50cyAtLT4KPGNpcmNsZSBjeD0iMTYiICBjeT0iMTYiICByPSIyIiBmaWxsPSIjMjJjNTVlIiBvcGFjaXR5PSIwLjMiLz4KPGNpcmNsZSBjeD0iMjY0IiBjeT0iMTYiICByPSIyIiBmaWxsPSIjMjJjNTVlIiBvcGFjaXR5PSIwLjMiLz4KPGNpcmNsZSBjeD0iMTYiICBjeT0iMjg0IiByPSIyIiBmaWxsPSIjMjJjNTVlIiBvcGFjaXR5PSIwLjMiLz4KPGNpcmNsZSBjeD0iMjY0IiBjeT0iMjg0IiByPSIyIiBmaWxsPSIjMjJjNTVlIiBvcGFjaXR5PSIwLjMiLz4KCjwvc3ZnPgo=" style="width:72px;height:72px;margin-bottom:8px" alt="VPH logo">
-        <div class="badge badge-green pulse" style="margin-bottom:12px">EPA/OSHA Aligned · 5 CEUs</div>
-        <h2 style="font-size:clamp(1.6rem,3vw,2rem);color:var(--t100);margin-bottom:6px">Advanced Mold Assessment</h2>
+
+      <!-- LOGO / HEADER -->
+      <div style="text-align:center;margin-bottom:24px">
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyODAgMzAwIj4KPGRlZnM+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJiZ0ciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgIDxzdG9wIG9mZnNldD0iMCUiICBzdG9wLWNvbG9yPSIjMDcwYzBhIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwZDE1MTAiLz4KICA8L2xpbmVhckdyYWRpZW50PgogIDxsaW5lYXJHcmFkaWVudCBpZD0ibGV0RyIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgIHN0b3AtY29sb3I9IiM0YWRlODAiLz4KICAgIDxzdG9wIG9mZnNldD0iNTUlIiBzdG9wLWNvbG9yPSIjMjJjNTVlIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxNTgwM2QiLz4KICA8L2xpbmVhckdyYWRpZW50PgogIDxsaW5lYXJHcmFkaWVudCBpZD0iaGFuZEciIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgIDxzdG9wIG9mZnNldD0iMCUiICBzdG9wLWNvbG9yPSIjMjJjNTVlIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxNDUzMmQiLz4KICA8L2xpbmVhckdyYWRpZW50PgogIDxsaW5lYXJHcmFkaWVudCBpZD0iYmRyRyIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgIHN0b3AtY29sb3I9IiMyMmM1NWUiLz4KICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzE1ODAzZCIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJydWxlRyIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjAiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgICBzdG9wLWNvbG9yPSJyZ2JhKDM0LDE5Nyw5NCwwKSIvPgogICAgPHN0b3Agb2Zmc2V0PSIyMCUiICBzdG9wLWNvbG9yPSJyZ2JhKDM0LDE5Nyw5NCwwLjcpIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjgwJSIgIHN0b3AtY29sb3I9InJnYmEoMzQsMTk3LDk0LDAuNykiLz4KICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0icmdiYSgzNCwxOTcsOTQsMCkiLz4KICA8L2xpbmVhckdyYWRpZW50PgogIDxmaWx0ZXIgaWQ9ImxnbG93IiB4PSItMzAlIiB5PSItMzAlIiB3aWR0aD0iMTYwJSIgaGVpZ2h0PSIxNjAlIj4KICAgIDxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjIuNSIgcmVzdWx0PSJiIi8+CiAgICA8ZmVDb2xvck1hdHJpeCBpbj0iYiIgdHlwZT0ibWF0cml4IgogICAgICB2YWx1ZXM9IjAgMCAwIDAgMC4xMyAgMCAwIDAgMCAwLjc3ICAwIDAgMCAwIDAuMzcgIDAgMCAwIDAuNSAwIiByZXN1bHQ9ImMiLz4KICAgIDxmZU1lcmdlPjxmZU1lcmdlTm9kZSBpbj0iYyIvPjxmZU1lcmdlTm9kZSBpbj0iU291cmNlR3JhcGhpYyIvPjwvZmVNZXJnZT4KICA8L2ZpbHRlcj4KICA8ZmlsdGVyIGlkPSJoZ2xvdyIgeD0iLTUwJSIgeT0iLTUwJSIgd2lkdGg9IjIwMCUiIGhlaWdodD0iMjAwJSI+CiAgICA8ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSI2IiByZXN1bHQ9ImIiLz4KICAgIDxmZUNvbG9yTWF0cml4IGluPSJiIiB0eXBlPSJtYXRyaXgiCiAgICAgIHZhbHVlcz0iMCAwIDAgMCAwLjA4ICAwIDAgMCAwIDAuNTUgIDAgMCAwIDAgMC4yNSAgMCAwIDAgMC40NSAwIiByZXN1bHQ9ImMiLz4KICAgIDxmZU1lcmdlPjxmZU1lcmdlTm9kZSBpbj0iYyIvPjxmZU1lcmdlTm9kZSBpbj0iU291cmNlR3JhcGhpYyIvPjwvZmVNZXJnZT4KICA8L2ZpbHRlcj4KPC9kZWZzPgoKPCEtLSBCQUNLR1JPVU5EIC0tPgo8cmVjdCB3aWR0aD0iMjgwIiBoZWlnaHQ9IjMwMCIgcng9IjE2IiBmaWxsPSJ1cmwoI2JnRykiLz4KPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjI3NiIgaGVpZ2h0PSIyOTYiIHJ4PSIxNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ1cmwoI2JkckcpIiBzdHJva2Utd2lkdGg9IjEuNSIgb3BhY2l0eT0iMC41NSIvPgo8cmVjdCB4PSI3IiB5PSI3IiB3aWR0aD0iMjY2IiBoZWlnaHQ9IjI4NiIgcng9IjEwIiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMzQsMTk3LDk0LDAuMDgpIiBzdHJva2Utd2lkdGg9IjEiLz4KCjwhLS0gVlBIIExFVFRFUlMgLS0+CjxnIGZpbHRlcj0idXJsKCNsZ2xvdykiPgoKICA8IS0tIFYgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSIxOCwzNSAzMywzNSA2OCwxMTggMTAzLDM1IDExOCwzNSA3NiwxMjggNjAsMTI4IiBmaWxsPSJ1cmwoI2xldEcpIi8+CgogIDwhLS0gUDogc3RlbSArIGJvd2wsIGV2ZW5vZGQgcHVuY2hlcyB0aGUgY291bnRlciAtLT4KICA8cGF0aCBmaWxsPSJ1cmwoI2xldEcpIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9IgogICAgTSAxMzAsMzUgTCAxNDQsMzUgTCAxNDQsMTI4IEwgMTMwLDEyOCBaCiAgICBNIDE0NCwzNSBRIDE2NSwzNSAxNzgsNDYgUSAxOTQsNjAgMTk0LDY2IFEgMTk0LDkwIDE3MCw5MyBRIDE1Nyw5NSAxNDQsOTUgTCAxNDQsMzUgWgogICAgTSAxNDgsNDkgUSAxNjMsNDkgMTczLDU3IFEgMTgxLDY0IDE4MSw2OCBRIDE4MSw4MCAxNjYsODIgUSAxNTcsODMgMTQ4LDgzIFoKICAiLz4KCiAgPCEtLSBIIC0tPgogIDxyZWN0IHg9IjIwMiIgeT0iMzUiIHdpZHRoPSIxNCIgaGVpZ2h0PSI5MyIgcng9IjEiIGZpbGw9InVybCgjbGV0RykiLz4KICA8cmVjdCB4PSIyNDgiIHk9IjM1IiB3aWR0aD0iMTQiIGhlaWdodD0iOTMiIHJ4PSIxIiBmaWxsPSJ1cmwoI2xldEcpIi8+CiAgPHJlY3QgeD0iMjAyIiB5PSI3NCIgIHdpZHRoPSI2MCIgaGVpZ2h0PSIxNCIgcng9IjEiIGZpbGw9InVybCgjbGV0RykiLz4KCjwvZz4KCjwhLS0gUlVMRSAtLT4KPHJlY3QgeD0iMTgiIHk9IjE0MCIgd2lkdGg9IjI0NCIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI3J1bGVHKSIvPgoKPCEtLSBDT01QQU5ZIE5BTUUgLS0+Cjx0ZXh0IHg9IjE0MCIgeT0iMTU4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIgogIGZvbnQtZmFtaWx5PSInSUJNIFBsZXggTW9ubycsIG1vbm9zcGFjZSIKICBmb250LXNpemU9IjkuNSIgZm9udC13ZWlnaHQ9IjcwMCIgbGV0dGVyLXNwYWNpbmc9IjIiCiAgZmlsbD0iIzIyYzU1ZSIgb3BhY2l0eT0iMC45Ij5WQVVHSE4tUE9SVEVSPC90ZXh0Pgo8dGV4dCB4PSIxNDAiIHk9IjE3MiIgdGV4dC1hbmNob3I9Im1pZGRsZSIKICBmb250LWZhbWlseT0iJ0lCTSBQbGV4IE1vbm8nLCBtb25vc3BhY2UiCiAgZm9udC1zaXplPSI3LjgiIGZvbnQtd2VpZ2h0PSI1MDAiIGxldHRlci1zcGFjaW5nPSIyLjUiCiAgZmlsbD0iIzRhZGU4MCIgb3BhY2l0eT0iMC40NSI+SE9MRElOR1MgIExMQzwvdGV4dD4KCjwhLS0KICBIQU5EIFBBVEggIChsb2NhbCBzcGFjZSwgcGFsbSBhdCB5PTAsIGZpbmdlcnMgZXh0ZW5kIHRvIC15KQogIFBpbmt5IHNob3J0ZXN0ICg0NCksIFJpbmcgKDYyKSwgTWlkZGxlIHRhbGxlc3QgKDcyKSwgSW5kZXggKDU4KSwgVGh1bWIgb24gcmlnaHQgc2lkZS4KICBMZWZ0IGhhbmQ6ICB0cmFuc2xhdGUoNzgsMjY4KSByb3RhdGUoLTI4KQogIFJpZ2h0IGhhbmQ6IHRyYW5zbGF0ZSgyMDIsMjY4KSBzY2FsZSgtMSwxKSByb3RhdGUoLTI4KQotLT4KCjwhLS0gTEVGVCBIQU5EIC0tPgo8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg3OCwyNjgpIHJvdGF0ZSgtMjgpIiBmaWx0ZXI9InVybCgjaGdsb3cpIj4KPHBhdGggZmlsbD0idXJsKCNoYW5kRykiIGQ9IgogIE0gLTI3LDI0CiAgQyAtMzEsMjQgLTMzLDE3IC0zMyw5IEMgLTMzLDMgLTMwLC0zIC0yNywtNwogIEMgLTI3LC0xMSAtMjYsLTQwIC0yMywtNDUgQyAtMjEsLTUyIC0xNCwtNTIgLTEyLC00NSBDIC0xMCwtNDAgLTEwLC0xMyAtMTEsLTcKICBDIC0xMCwtMTMgLTgsLTE2IC03LC0xNiBDIC03LC0yMSAtNiwtNTggLTQsLTYzIEMgLTIsLTcwIDQsLTcwIDYsLTYzIEMgOCwtNTggOCwtMjEgNywtMTYKICBDIDcsLTIwIDksLTIxIDExLC0yMSBDIDExLC0yNSAxMSwtNjYgMTQsLTcyIEMgMTYsLTc5IDIyLC03OSAyNCwtNzIgQyAyNiwtNjYgMjYsLTI1IDI1LC0yMQogIEMgMjUsLTI0IDI3LC0yMyAyOCwtMjEgQyAyOCwtMjUgMjgsLTU0IDMxLC01OSBDIDMzLC02NSAzOCwtNjUgNDAsLTU5IEMgNDIsLTU0IDQyLC0yMyA0MSwtMTcKICBDIDQzLC05IDQ1LDQgNDIsMTQgQyA0MCwyMiAzMywyNCAyOCwyNAogIEMgMjksMjcgNDEsMzYgNDUsMjggQyA1MSwxOCA0OCw1IDQxLDMgQyAzOCwyIDM2LDQgMzUsOSBDIDM0LDE0IDM2LDIwIDMzLDI0CiAgQyAxMywyNiAtNywyNiAtMjcsMjQgWgoiLz4KPC9nPgoKPCEtLSBSSUdIVCBIQU5EIChtaXJyb3JlZCkgLS0+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDIwMiwyNjgpIHNjYWxlKC0xLDEpIHJvdGF0ZSgtMjgpIiBmaWx0ZXI9InVybCgjaGdsb3cpIj4KPHBhdGggZmlsbD0idXJsKCNoYW5kRykiIGQ9IgogIE0gLTI3LDI0CiAgQyAtMzEsMjQgLTMzLDE3IC0zMyw5IEMgLTMzLDMgLTMwLC0zIC0yNywtNwogIEMgLTI3LC0xMSAtMjYsLTQwIC0yMywtNDUgQyAtMjEsLTUyIC0xNCwtNTIgLTEyLC00NSBDIC0xMCwtNDAgLTEwLC0xMyAtMTEsLTcKICBDIC0xMCwtMTMgLTgsLTE2IC03LC0xNiBDIC03LC0yMSAtNiwtNTggLTQsLTYzIEMgLTIsLTcwIDQsLTcwIDYsLTYzIEMgOCwtNTggOCwtMjEgNywtMTYKICBDIDcsLTIwIDksLTIxIDExLC0yMSBDIDExLC0yNSAxMSwtNjYgMTQsLTcyIEMgMTYsLTc5IDIyLC03OSAyNCwtNzIgQyAyNiwtNjYgMjYsLTI1IDI1LC0yMQogIEMgMjUsLTI0IDI3LC0yMyAyOCwtMjEgQyAyOCwtMjUgMjgsLTU0IDMxLC01OSBDIDMzLC02NSAzOCwtNjUgNDAsLTU5IEMgNDIsLTU0IDQyLC0yMyA0MSwtMTcKICBDIDQzLC05IDQ1LDQgNDIsMTQgQyA0MCwyMiAzMywyNCAyOCwyNAogIEMgMjksMjcgNDEsMzYgNDUsMjggQyA1MSwxOCA0OCw1IDQxLDMgQyAzOCwyIDM2LDQgMzUsOSBDIDM0LDE0IDM2LDIwIDMzLDI0CiAgQyAxMywyNiAtNywyNiAtMjcsMjQgWgoiLz4KPC9nPgoKPCEtLSBDb3JuZXIgYWNjZW50cyAtLT4KPGNpcmNsZSBjeD0iMTYiICBjeT0iMTYiICByPSIyIiBmaWxsPSIjMjJjNTVlIiBvcGFjaXR5PSIwLjMiLz4KPGNpcmNsZSBjeD0iMjY0IiBjeT0iMTYiICByPSIyIiBmaWxsPSIjMjJjNTVlIiBvcGFjaXR5PSIwLjMiLz4KPGNpcmNsZSBjeD0iMTYiICBjeT0iMjg0IiByPSIyIiBmaWxsPSIjMjJjNTVlIiBvcGFjaXR5PSIwLjMiLz4KPGNpcmNsZSBjeD0iMjY0IiBjeT0iMjg0IiByPSIyIiBmaWxsPSIjMjJjNTVlIiBvcGFjaXR5PSIwLjMiLz4KCjwvc3ZnPgo=" style="width:64px;height:64px;margin-bottom:8px" alt="VPH logo">
+        <div class="badge badge-green pulse" style="margin-bottom:10px">EPA/OSHA Aligned · 5 CEUs</div>
+        <h2 style="font-size:clamp(1.4rem,3vw,1.8rem);color:var(--t100);margin-bottom:4px">Advanced Mold Assessment</h2>
         <p style="font-size:12px;color:var(--t500);font-family:var(--mono)">&amp; Green Remediation Workshop</p>
-        <p style="font-family:var(--mono);font-size:10px;color:var(--g600);letter-spacing:0.12em;text-transform:uppercase;margin-top:6px">Vaughn-Porter Holdings LLC</p>
+        <p style="font-family:var(--mono);font-size:10px;color:var(--g600);letter-spacing:0.12em;text-transform:uppercase;margin-top:4px">Vaughn-Porter Holdings LLC</p>
       </div>
-      <div style="display:flex;flex-direction:column;gap:16px">
-        <div><label class="field-label">Full Name *</label><input class="field-input" id="login-name" type="text" placeholder="Your Full Name" autocomplete="name" onkeydown="if(event.key==='Enter')beginCourse()"></div>
-        <div><label class="field-label">Email (for certificate)</label><input class="field-input" id="login-email" type="email" placeholder="your@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')beginCourse()"></div>
+
+      <!-- LOGIN TYPE TABS -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:4px;margin-bottom:20px">
+        <button id="login-tab-new" onclick="switchLoginTab('new')"
+          style="padding:9px;border-radius:calc(var(--radius) - 2px);border:none;cursor:pointer;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:0.06em;transition:all 0.18s;background:var(--g600);color:#fff">
+          ✦ NEW STUDENT
+        </button>
+        <button id="login-tab-returning" onclick="switchLoginTab('returning')"
+          style="padding:9px;border-radius:calc(var(--radius) - 2px);border:none;cursor:pointer;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:0.06em;transition:all 0.18s;background:transparent;color:var(--t500)">
+          ↩ RETURNING
+        </button>
+      </div>
+
+      <!-- NEW STUDENT PANEL -->
+      <div id="login-panel-new" style="display:flex;flex-direction:column;gap:14px">
+        <div><label class="field-label">Full Name *</label>
+          <input class="field-input" id="login-name" type="text" placeholder="Your Full Name" autocomplete="name" onkeydown="if(event.key==='Enter')beginCourse()"></div>
+        <div><label class="field-label">Email <span style="color:var(--t600)">(used for your certificate)</span></label>
+          <input class="field-input" id="login-email" type="email" placeholder="your@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')beginCourse()"></div>
         <div>
           <label class="field-label">Class <span style="color:var(--t600)">(auto-assigned if you're on the roster)</span></label>
           <select class="field-input" id="login-class" style="cursor:pointer"><option value="">Loading classes...</option></select>
         </div>
-        <button class="btn btn-primary" onclick="beginCourse()" style="width:100%;justify-content:center;padding:14px;font-size:13px;margin-top:4px">▶ &nbsp;Begin Course</button>
+        <button class="btn btn-primary" onclick="beginCourse()" style="width:100%;justify-content:center;padding:13px;font-size:13px;margin-top:2px">▶ &nbsp;Begin Course</button>
+      </div>
+
+      <!-- RETURNING STUDENT PANEL -->
+      <div id="login-panel-returning" style="display:none;flex-direction:column;gap:14px">
+        <div style="background:rgba(34,197,94,0.06);border:1px solid var(--border-g);border-radius:var(--radius);padding:12px 14px;font-size:12px;color:var(--t400);line-height:1.6">
+          Enter the <strong style="color:var(--t200)">exact name</strong> you used when you first registered. Your progress, lessons, and exam results will be restored automatically.
+        </div>
+        <div><label class="field-label">Full Name *</label>
+          <input class="field-input" id="returning-name" type="text" placeholder="Your Full Name (as registered)" autocomplete="name" onkeydown="if(event.key==='Enter')resumeStudent()"></div>
+        <div id="returning-status" style="display:none;border-radius:var(--radius);padding:12px 14px;font-size:12px;line-height:1.6"></div>
+        <button class="btn btn-ghost" onclick="lookupReturningStudent()" style="width:100%;justify-content:center;padding:13px;font-size:13px">🔍 &nbsp;Find My Account</button>
+        <button class="btn btn-primary" id="returning-continue-btn" onclick="resumeStudent()" style="width:100%;justify-content:center;padding:13px;font-size:13px;display:none">▶ &nbsp;Continue Course</button>
+      </div>
+
+      <!-- FOOTER -->
+      <div style="margin-top:18px;display:flex;flex-direction:column;gap:8px">
         <div style="text-align:center;font-size:12px;color:var(--t600)">— or —</div>
         <button class="btn btn-ghost" onclick="promptInstructor()" style="width:100%;justify-content:center">🔒 Instructor / Admin Login</button>
       </div>
-      <p style="font-family:var(--mono);font-size:10px;color:var(--t600);text-align:center;margin-top:20px">Developed by <span style="color:var(--t500)">Kaylon Vaughn</span> · <span style="color:var(--g600)">Vaughn-Porter Holdings LLC</span></p>
+      <p style="font-family:var(--mono);font-size:10px;color:var(--t600);text-align:center;margin-top:16px">Developed by <span style="color:var(--t500)">Kaylon Vaughn</span> · <span style="color:var(--g600)">Vaughn-Porter Holdings LLC</span></p>
+
     </div>
   </div>
 </div>
@@ -920,13 +968,144 @@ async function beginCourse(){
       timestamp:new Date().toISOString(), seen:false
     }), true);
   }catch(e){}
-  showToast(`Welcome, ${name}! 🌿`);
+  // Restore saved progress if returning student
+  const resumed=await loadProgress(name);
+  if(resumed&&state.completedLessons.size>0) showToast(`Welcome back, ${name}! Resuming at lesson ${state.currentLesson+1}. 🌿`);
+  else showToast(`Welcome, ${name}! 🌿`);
   goHome();
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// READING PROGRESS
+// LOGIN TAB SWITCHING
 // ═══════════════════════════════════════════════════════════════════
+function switchLoginTab(tab){
+  const isNew=tab==='new';
+  document.getElementById('login-panel-new').style.display=isNew?'flex':'none';
+  document.getElementById('login-panel-returning').style.display=isNew?'none':'flex';
+  const tabNew=document.getElementById('login-tab-new');
+  const tabRet=document.getElementById('login-tab-returning');
+  tabNew.style.background=isNew?'var(--g600)':'transparent';
+  tabNew.style.color=isNew?'#fff':'var(--t500)';
+  tabRet.style.background=isNew?'transparent':'var(--g600)';
+  tabRet.style.color=isNew?'var(--t500)':'#fff';
+  // Reset returning status
+  const st=document.getElementById('returning-status');
+  const btn=document.getElementById('returning-continue-btn');
+  if(st){st.style.display='none';st.innerHTML='';}
+  if(btn) btn.style.display='none';
+  window._returningStudentData=null;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// RETURNING STUDENT LOOKUP
+// ═══════════════════════════════════════════════════════════════════
+window._returningStudentData=null;
+
+async function lookupReturningStudent(){
+  const name=document.getElementById('returning-name').value.trim();
+  const statusEl=document.getElementById('returning-status');
+  const continueBtn=document.getElementById('returning-continue-btn');
+  if(!name){alert('Please enter your full name.');return;}
+
+  statusEl.style.display='block';
+  statusEl.style.background='var(--bg3)';
+  statusEl.style.border='1px solid var(--border)';
+  statusEl.style.color='var(--t400)';
+  statusEl.innerHTML='<span style="font-family:var(--mono);font-size:11px">🔍 Searching...</span>';
+  continueBtn.style.display='none';
+  window._returningStudentData=null;
+
+  // Look up progress record
+  const progressKey='progress:'+name.toLowerCase().trim().replace(/\s+/g,'-').substring(0,40);
+  let progress=null;
+  try{const r=await window.storage.get(progressKey,true);if(r)progress=JSON.parse(r.value);}catch(e){}
+
+  // Look up exam records
+  let exams=[];
+  try{
+    const keys=await window.storage.list('score:',true);
+    if(keys&&keys.keys){
+      for(const k of keys.keys){
+        try{const r=await window.storage.get(k,true);if(r){const d=JSON.parse(r.value);if((d.name||'').toLowerCase().trim()===name.toLowerCase().trim())exams.push(d);}}catch(e){}
+      }
+    }
+  }catch(e){}
+  exams.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+
+  // Look up roster for class info
+  let classId='',classData=null;
+  const rosterMatch=await lookupRosterClass(name);
+  if(rosterMatch){classId=rosterMatch.id;classData=rosterMatch;}
+
+  const lessonsComplete=progress?progress.completedLessons?.length||0:0;
+  const lastLesson=progress?progress.currentLesson||0:0;
+  const bestExam=exams.find(e=>e.passed)||exams[0]||null;
+
+  if(!progress&&exams.length===0&&!rosterMatch){
+    statusEl.style.background='rgba(239,68,68,0.08)';
+    statusEl.style.border='1px solid rgba(239,68,68,0.25)';
+    statusEl.style.color='var(--r400)';
+    statusEl.innerHTML=`<strong>No account found for "${name}".</strong><br><span style="font-size:11px;color:var(--t500)">Check spelling or use New Student to register.</span>`;
+    return;
+  }
+
+  window._returningStudentData={name, classId, classData, progress, exams};
+
+  // Build status card
+  const pct=Math.round((lessonsComplete/12)*100);
+  statusEl.style.background='rgba(34,197,94,0.06)';
+  statusEl.style.border='1px solid var(--border-g)';
+  statusEl.style.color='var(--t300)';
+  statusEl.innerHTML=`
+    <div style="font-weight:700;color:var(--t100);margin-bottom:8px">✓ Account found — ${name}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-family:var(--mono);font-size:11px">
+      <div>Lessons complete: <span style="color:var(--g400);font-weight:700">${lessonsComplete}/12</span></div>
+      <div>Progress: <span style="color:var(--g400);font-weight:700">${pct}%</span></div>
+      <div>Exams taken: <span style="color:var(--t200);font-weight:700">${exams.length}</span></div>
+      ${bestExam?`<div>Best score: <span style="color:${bestExam.passed?'var(--g400)':'var(--a400)'};font-weight:700">${bestExam.pct}% ${bestExam.passed?'✓ PASS':'FAIL'}</span></div>`:'<div></div>'}
+      ${classData?`<div style="grid-column:1/-1">Class: <span style="color:var(--a400)">${classData.number} — ${classData.name}</span></div>`:''}
+    </div>
+    ${lessonsComplete>0?`<div style="margin-top:8px;font-size:11px;color:var(--t500)">Will resume at lesson ${lastLesson+1}.</div>`:'<div style="margin-top:8px;font-size:11px;color:var(--t500)">No lesson progress saved yet — will start from the beginning.</div>'}`;
+
+  continueBtn.style.display='flex';
+}
+
+async function resumeStudent(){
+  const d=window._returningStudentData;
+  if(!d){await lookupReturningStudent();return;}
+  if(!window._returningStudentData) return; // lookup failed
+
+  const name=d.name;
+  state.studentName=name;
+  state.studentEmail=d.exams[0]?.email||'';
+  state.startTime=new Date().toISOString();
+  state.completedLessons=new Set();
+  state.currentLesson=0;
+
+  // Restore class
+  if(d.classData){
+    state.currentClass={id:d.classData.id,number:d.classData.number,name:d.classData.name,date:d.classData.date||''};
+  } else if(d.exams[0]?.classId&&d.exams[0].classId!=='self-study'){
+    try{const r=await window.storage.get('class:'+d.exams[0].classId,true);if(r)state.currentClass=JSON.parse(r.value);}
+    catch(e){state.currentClass={id:'?',number:'N/A',name:'',date:''};}
+  } else {
+    state.currentClass={id:'self-study',number:'N/A',name:'Self-Study',date:''};
+  }
+
+  // Restore last exam result if passed
+  const passed=d.exams.find(e=>e.passed);
+  if(passed) state.lastExamResult=passed;
+
+  // Load progress
+  await loadProgress(name);
+
+  const lessonsBack=state.completedLessons.size;
+  showToast(lessonsBack>0?`Welcome back, ${name}! Resuming at lesson ${state.currentLesson+1}. 🌿`:`Welcome back, ${name}! 🌿`);
+  window._returningStudentData=null;
+  goHome();
+}
+
+
 function updateReadingProgress(){
   const el=document.getElementById('lesson-content');
   const fill=document.getElementById('reading-progress-fill');
@@ -997,6 +1176,106 @@ async function clearHeartbeat(){try{await window.storage.delete('active:'+SESSIO
 window.addEventListener('beforeunload',clearHeartbeat);
 
 // ═══════════════════════════════════════════════════════════════════
+// PROGRESS PERSISTENCE — save/load completedLessons per student
+// ═══════════════════════════════════════════════════════════════════
+async function saveProgress(){
+  if(!state.studentName) return;
+  const key='progress:'+state.studentName.toLowerCase().trim().replace(/\s+/g,'-').substring(0,40);
+  try{
+    await window.storage.set(key, JSON.stringify({
+      completedLessons:[...state.completedLessons],
+      currentLesson:state.currentLesson,
+      savedAt:new Date().toISOString()
+    }), true);
+  }catch(e){}
+}
+
+async function loadProgress(name){
+  const key='progress:'+name.toLowerCase().trim().replace(/\s+/g,'-').substring(0,40);
+  try{
+    const r=await window.storage.get(key,true);
+    if(r){
+      const d=JSON.parse(r.value);
+      state.completedLessons=new Set(d.completedLessons||[]);
+      state.currentLesson=d.currentLesson||0;
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// INSTRUCTOR IMPERSONATION
+// ═══════════════════════════════════════════════════════════════════
+window._instructorSession=null; // saved instructor state to restore
+
+async function impersonateStudent(s){
+  // Save instructor state
+  window._instructorSession={
+    studentName:state.studentName, studentEmail:state.studentEmail,
+    currentClass:state.currentClass, startTime:state.startTime,
+    completedLessons:new Set(state.completedLessons), currentLesson:state.currentLesson,
+    lastExamResult:state.lastExamResult
+  };
+
+  // Load student state
+  state.studentName=s.name;
+  state.studentEmail=s.email||'';
+  state.startTime=s.firstSeen||new Date().toISOString();
+  state.lastExamResult=s.exams&&s.exams.length?s.exams.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0]:null;
+
+  // Resolve class
+  if(s.classId&&s.classId!=='self-study'){
+    try{const r=await window.storage.get('class:'+s.classId,true);if(r)state.currentClass=JSON.parse(r.value);}
+    catch(e){state.currentClass={id:s.classId,number:s.classNumber||'N/A',name:s.className||'',date:''};}
+  } else {
+    state.currentClass={id:'self-study',number:'N/A',name:'Self-Study',date:''};
+  }
+
+  // Load saved lesson progress
+  state.completedLessons=new Set();
+  state.currentLesson=0;
+  await loadProgress(s.name);
+
+  // Show banner
+  document.getElementById('impersonation-name').textContent=s.name;
+  document.body.classList.add('impersonating');
+
+  showToast(`🔑 Viewing as ${s.name}`);
+  goHome();
+}
+
+function exitImpersonation(){
+  if(!window._instructorSession) return;
+  const is=window._instructorSession;
+  state.studentName=is.studentName;
+  state.studentEmail=is.studentEmail;
+  state.currentClass=is.currentClass;
+  state.startTime=is.startTime;
+  state.completedLessons=is.completedLessons;
+  state.currentLesson=is.currentLesson;
+  state.lastExamResult=is.lastExamResult;
+  window._instructorSession=null;
+  document.body.classList.remove('impersonating');
+  stopHeartbeat();
+  renderInstructorDashboard();
+  showScreen('screen-instructor');
+  showToast('Returned to instructor dashboard');
+}
+
+// Open score editor in "create" mode for a student with no record yet
+function openManualResultEditor(encodedName, email, classId, classNumber, className){
+  const name=decodeURIComponent(encodedName);
+  const fakeRecord={
+    name, email, classId, classNumber, className,
+    score:0, total:30, pct:0, passed:false,
+    certId:null, timestamp:new Date().toISOString(),
+    _isNew:true
+  };
+  openScoreEditor(fakeRecord);
+}
+
+// ═══════════════════════════════════════════════════════════════════
 // LESSON RENDERING
 // ═══════════════════════════════════════════════════════════════════
 function goToLesson(idx){renderLesson(idx);showScreen('screen-lesson');}
@@ -1039,6 +1318,7 @@ function renderLesson(index){
   updateTopNav();updateNarratorBtns();
   document.getElementById('reading-progress-fill').style.width='0%';
   saveHeartbeat();
+  saveProgress();
 }
 
 function nextLesson(){
@@ -1786,6 +2066,7 @@ async function renderStudentsTab(el){
             ${best!==null?`<span class="badge badge-green" style="font-size:9px">Best: ${best}%</span>`:'<span class="badge badge-gray" style="font-size:9px">No exam yet</span>'}
             ${certStatus?`<span style="font-family:var(--mono);font-size:9px;letter-spacing:0.05em" class="${certStatus.cls}">🏆 ${certStatus.label}</span>`:''}
             ${onRoster?'<span class="badge badge-gray" style="font-size:9px">On Roster</span>':''}
+            <button class="btn btn-ghost btn-sm" style="font-size:10px;background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.3);color:#f59e0b" onclick="impersonateStudent(${JSON.stringify(s).replace(/"/g,'&quot;')})">🔑 Login as Student</button>
             <button class="btn btn-ghost btn-sm" style="font-size:10px" onclick="toggleStudentExpand('${encodeURIComponent(s.name)}')">✏️ Edit / Details</button>
           </div>
         </div>
@@ -1825,10 +2106,15 @@ async function renderStudentsTab(el){
                       <span class="badge ${e.passed?'badge-green':'badge-red'}" style="font-size:9px">${e.passed?'PASS':'FAIL'}</span>
                       <span style="font-family:var(--mono);font-size:11px;color:var(--t100);font-weight:700;margin-left:8px">${e.pct}%</span>
                       <span style="font-family:var(--mono);font-size:10px;color:var(--t500)"> (${e.score}/${e.total})</span>
+                      ${e.overrideNote?`<span style="font-size:9px;color:var(--a400);margin-left:6px">📝 ${e.overrideNote}</span>`:''}
                     </div>
-                    <div style="font-family:var(--mono);font-size:9px;color:var(--t600)">${new Date(e.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
+                    <div style="display:flex;align-items:center;gap:6px">
+                      <div style="font-family:var(--mono);font-size:9px;color:var(--t600)">${new Date(e.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
+                      <button class="btn btn-ghost btn-sm" style="font-size:9px;padding:2px 7px" onclick="openScoreEditor(${JSON.stringify(e).replace(/"/g,'&quot;')})">✏ Edit</button>
+                    </div>
                   </div>`).join('')}
               </div>`}
+              <button class="btn btn-ghost btn-sm" style="margin-top:10px;font-size:10px" onclick="openManualResultEditor('${encodeURIComponent(s.name)}','${s.email||''}','${s.classId||''}','${s.classNumber||'N/A'}','${(s.className||'').replace(/'/g,"\\'")}')">+ Add Manual Result</button>
               ${s.exams.length>0?`
               <div style="margin-top:12px">
                 <div style="font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--t500);margin-bottom:6px">Score Trend</div>
@@ -2147,44 +2433,52 @@ async function saveScoreOverride(){
   const newPassed=passedSel==='pass'?true:passedSel==='fail'?false:newPct>=75;
   const note=document.getElementById('se-note').value.trim();
 
-  // Find and update score record
-  const updated={...r, score:newScore, pct:newPct, passed:newPassed, overrideNote:note||undefined, overriddenAt:new Date().toISOString()};
-  try{
-    const keys=await window.storage.list('score:',true);
-    if(keys&&keys.keys){
-      for(const k of keys.keys){
-        try{
-          const res=await window.storage.get(k,true);
-          if(res){
-            const d=JSON.parse(res.value);
-            if(d.certId===r.certId&&d.timestamp===r.timestamp){
-              await window.storage.set(k,JSON.stringify(updated),true);
-              break;
+  const certId=r.certId||(newPassed?'CERT-'+Date.now().toString(36).toUpperCase():null);
+  const timestamp=r._isNew?new Date().toISOString():r.timestamp;
+  const expiryDate=r._isNew?getCertExpiry(timestamp).toISOString():(r.expiryDate||getCertExpiry(timestamp).toISOString());
+  const updated={...r, score:newScore, pct:newPct, passed:newPassed,
+    certId:newPassed?certId:null,
+    timestamp, expiryDate,
+    overrideNote:note||undefined,
+    overriddenAt:new Date().toISOString(),
+    _isNew:undefined};
+  delete updated._isNew;
+
+  if(r._isNew){
+    // Brand new record — write fresh
+    const scoreKey='score:'+timestamp.replace(/[:.]/g,'-')+'-'+r.name.replace(/\s+/g,'_').substring(0,20);
+    try{await window.storage.set(scoreKey,JSON.stringify(updated),true);}catch(e){alert('Failed to save.');return;}
+  } else {
+    // Find and update existing score record
+    try{
+      const keys=await window.storage.list('score:',true);
+      if(keys&&keys.keys){
+        for(const k of keys.keys){
+          try{
+            const res=await window.storage.get(k,true);
+            if(res){
+              const d=JSON.parse(res.value);
+              if(d.timestamp===r.timestamp&&(d.name||'').toLowerCase()===(r.name||'').toLowerCase()){
+                await window.storage.set(k,JSON.stringify(updated),true);
+                break;
+              }
             }
-          }
-        }catch(e){}
+          }catch(e){}
+        }
       }
-    }
-  }catch(e){}
+    }catch(e){}
+  }
 
   // Update or create/delete cert record
-  if(r.certId){
-    if(newPassed){
-      await window.storage.set('cert:'+r.certId,JSON.stringify(updated),true);
-    } else {
-      // Remove cert if now failed
-      try{await window.storage.delete('cert:'+r.certId,true);}catch(e){}
-    }
-  } else if(newPassed){
-    // Create cert for newly-passed record
-    const certId='CERT-'+Date.now().toString(36).toUpperCase();
-    updated.certId=certId;
+  if(newPassed&&certId){
     await window.storage.set('cert:'+certId,JSON.stringify(updated),true);
+  } else if(r.certId&&!newPassed){
+    try{await window.storage.delete('cert:'+r.certId,true);}catch(e){}
   }
 
   closeScoreEditor();
-  showToast(`✓ ${r.name}'s record updated`);
-  switchAdminTab('results');
+  showToast(`✓ ${r.name}'s record ${r._isNew?'created':'updated'}`);
+  switchAdminTab('students');
 }
 
 async function deleteStudentRecord(r){
