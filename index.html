@@ -317,6 +317,31 @@ body.light-mode .toast{background:#fff;color:#16a34a}
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
+<!-- INSTRUCTOR LOGIN MODAL -->
+<div class="modal-overlay" id="instructor-login-modal">
+  <div class="modal-box" style="max-width:400px">
+    <div class="modal-header">
+      <div class="modal-title">🔒 Staff Login</div>
+      <button class="modal-close" onclick="closeInstructorLogin()">✕</button>
+    </div>
+    <div class="modal-body" style="padding:20px;display:flex;flex-direction:column;gap:16px">
+      <div>
+        <label class="field-label">Login As</label>
+        <select class="field-input" id="ilogin-who" style="cursor:pointer">
+          <option value="__admin__">🛡 Admin — Kaylon Vaughn</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label">PIN</label>
+        <input class="field-input" id="ilogin-pin" type="password" placeholder="Enter PIN" maxlength="20"
+          onkeydown="if(event.key==='Enter')doInstructorLogin()">
+      </div>
+      <div id="ilogin-error" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:var(--radius);padding:10px;font-size:12px;color:#f87171;font-family:var(--mono)">Incorrect PIN. Please try again.</div>
+      <button class="btn btn-primary" onclick="doInstructorLogin()" style="width:100%;justify-content:center;padding:12px">🔓 Login</button>
+    </div>
+  </div>
+</div>
+
 <!-- SCORE EDITOR MODAL -->
 <div class="modal-overlay" id="score-editor-modal">
   <div class="modal-box" style="max-width:420px">
@@ -471,7 +496,7 @@ body.light-mode .toast{background:#fff;color:#16a34a}
       <!-- FOOTER -->
       <div style="margin-top:18px;display:flex;flex-direction:column;gap:8px">
         <div style="text-align:center;font-size:12px;color:var(--t600)">— or —</div>
-        <button class="btn btn-ghost" onclick="promptInstructor()" style="width:100%;justify-content:center">🔒 Instructor / Admin Login</button>
+        <button class="btn btn-ghost" onclick="openInstructorLogin()" style="width:100%;justify-content:center">🔒 Instructor / Admin Login</button>
       </div>
       <p style="font-family:var(--mono);font-size:10px;color:var(--t600);text-align:center;margin-top:16px">Developed by <span style="color:var(--t500)">Kaylon Vaughn</span> · <span style="color:var(--g600)">Vaughn-Porter Holdings LLC</span></p>
 
@@ -549,7 +574,7 @@ body.light-mode .toast{background:#fff;color:#16a34a}
     </div>
     <div style="margin-top:32px;padding-top:16px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
       <div style="font-family:var(--mono);font-size:10px;color:var(--t600)">© Vaughn-Porter Holdings LLC · Kaylon Vaughn · Advanced Mold Assessment &amp; Green Remediation Workshop</div>
-      <button onclick="promptInstructor()" style="background:none;border:none;cursor:pointer;font-family:var(--mono);font-size:10px;color:var(--t600);padding:4px 8px;border-radius:2px;transition:color 0.2s" onmouseover="this.style.color='var(--t400)'" onmouseout="this.style.color='var(--t600)'">Instructor Access →</button>
+      <button onclick="openInstructorLogin()" style="background:none;border:none;cursor:pointer;font-family:var(--mono);font-size:10px;color:var(--t600);padding:4px 8px;border-radius:2px;transition:color 0.2s" onmouseover="this.style.color='var(--t400)'" onmouseout="this.style.color='var(--t600)'">Instructor Access →</button>
     </div>
   </div>
 </div>
@@ -921,22 +946,17 @@ function updateCourseProgressBar(){
 // ═══════════════════════════════════════════════════════════════════
 async function loadLoginClasses(){
   const sel=document.getElementById('login-class');
-  let classes=[];
+  const opts=['<option value="">-- Select Your Class --</option>'];
   try{
     const keys=await window.storage.list('class:',true);
     if(keys&&keys.keys&&keys.keys.length>0){
+      const classes=[];
       for(const k of keys.keys){try{const r=await window.storage.get(k,true);if(r)classes.push(JSON.parse(r.value));}catch(e){}}
       classes.sort((a,b)=>a.number.localeCompare(b.number));
+      classes.forEach(c=>{opts.push(`<option value="${c.id}">${c.number} — ${c.name} (${c.date})</option>`);});
     }
   }catch(e){}
-  const opts=[];
-  if(classes.length>0){
-    opts.push('<option value="">-- Select Your Class --</option>');
-    classes.forEach(c=>{opts.push(`<option value="${c.id}">${c.number} — ${c.name} (${c.date})</option>`);});
-    opts.push('<option value="self-study">Self-Study / No Class</option>');
-  } else {
-    opts.push('<option value="self-study" selected>Self-Study / No Class</option>');
-  }
+  opts.push('<option value="self-study">Self-Study / No Class</option>');
   sel.innerHTML=opts.join('');
 }
 
@@ -954,7 +974,7 @@ async function beginCourse(){
       showToast(`✓ Class assigned: ${rosterClass.number} — ${rosterClass.name}`);
     }
   }
-  if(!classId){classId='self-study';} // default to self-study if nothing selected
+  if(!classId){alert('Please select a class or ask your instructor to add you to the roster.');return;}
 
   state.studentName=name;state.studentEmail=email;state.startTime=new Date().toISOString();
   if(classId==='self-study'){
@@ -1213,6 +1233,10 @@ async function loadProgress(name){
 // INSTRUCTOR IMPERSONATION
 // ═══════════════════════════════════════════════════════════════════
 window._instructorSession=null; // saved instructor state to restore
+window._sessionRole='';            // 'admin' | 'instructor'
+window._sessionInstructorId=null;  // instructor id or null
+window._sessionInstructorClasses=null; // [classId,...] — null means see everything (admin)
+window._sessionInstructorName='';
 
 async function impersonateStudent(s){
   // Save instructor state
@@ -1610,6 +1634,7 @@ function closeCertModal(){
 }
 document.getElementById('cert-modal').addEventListener('click',function(e){if(e.target===this)closeCertModal();});
 document.getElementById('score-editor-modal').addEventListener('click',function(e){if(e.target===this)closeScoreEditor();});
+document.getElementById('instructor-login-modal').addEventListener('click',function(e){if(e.target===this)closeInstructorLogin();});
 
 function printCertificate(){
   const r=state.lastExamResult||{};const cls=state.currentClass||{};
@@ -1697,38 +1722,90 @@ async function emailCertToSelf(){
 // INSTRUCTOR DASHBOARD
 // ═══════════════════════════════════════════════════════════════════
 let adminTab='overview';
-function promptInstructor(){const pin=prompt('Enter instructor PIN:');if(pin===null)return;checkInstructorPin(pin);}
+// ═══════════════════════════════════════════════════════════════════════════
+// INSTRUCTOR / ADMIN LOGIN
+// ═══════════════════════════════════════════════════════════════════════════
+async function openInstructorLogin(){
+  const sel=document.getElementById('ilogin-who');
+  sel.innerHTML='<option value="__admin__">🛡 Admin — Kaylon Vaughn</option>';
+  try{
+    const keys=await window.storage.list('instructor:',true);
+    if(keys&&keys.keys){
+      for(const k of keys.keys){
+        try{const r=await window.storage.get(k,true);if(r){const d=JSON.parse(r.value);sel.innerHTML+=`<option value="${d.id}">👤 ${d.name}</option>`;}}catch(e){}
+      }
+    }
+  }catch(e){}
+  document.getElementById('ilogin-pin').value='';
+  document.getElementById('ilogin-error').style.display='none';
+  document.getElementById('instructor-login-modal').classList.add('show');
+  setTimeout(()=>document.getElementById('ilogin-pin').focus(),100);
+}
+function closeInstructorLogin(){document.getElementById('instructor-login-modal').classList.remove('show');}
+
+async function doInstructorLogin(){
+  const who=document.getElementById('ilogin-who').value;
+  const pin=document.getElementById('ilogin-pin').value.trim();
+  if(!pin){document.getElementById('ilogin-error').style.display='block';return;}
+  if(who==='__admin__'){
+    let storedPin='2025';
+    try{const s=await window.storage.get('settings:instructor-pin',true);if(s)storedPin=s.value;}catch(e){}
+    if(pin!==storedPin){document.getElementById('ilogin-error').style.display='block';return;}
+    window._sessionRole='admin';window._sessionInstructorId=null;window._sessionInstructorClasses=null;window._sessionInstructorName='Kaylon Vaughn';
+  } else {
+    try{
+      const r=await window.storage.get('instructor:'+who,true);
+      if(!r){document.getElementById('ilogin-error').style.display='block';return;}
+      const instr=JSON.parse(r.value);
+      if(pin!==instr.pin){document.getElementById('ilogin-error').style.display='block';return;}
+      window._sessionRole='instructor';window._sessionInstructorId=instr.id;window._sessionInstructorClasses=instr.classIds||[];window._sessionInstructorName=instr.name;
+    }catch(e){document.getElementById('ilogin-error').style.display='block';return;}
+  }
+  closeInstructorLogin();
+  await renderInstructorDashboard();
+  showScreen('screen-instructor');
+}
+
+function logoutDashboard(){
+  window._sessionRole='';window._sessionInstructorId=null;window._sessionInstructorClasses=null;window._sessionInstructorName='';
+  showScreen('screen-login');showToast('Logged out.');
+}
+
+function promptInstructor(){openInstructorLogin();}
 async function checkInstructorPin(pin){
   let storedPin='2025';
   try{const s=await window.storage.get('settings:instructor-pin',true);if(s)storedPin=s.value;}catch(e){}
-  if(pin===storedPin){renderInstructorDashboard();showScreen('screen-instructor');}
+  if(pin===storedPin){window._sessionRole='admin';window._sessionInstructorId=null;window._sessionInstructorClasses=null;window._sessionInstructorName='Kaylon Vaughn';renderInstructorDashboard();showScreen('screen-instructor');}
   else{alert('Incorrect PIN.');}
 }
 
 async function renderInstructorDashboard(){
   const el=document.getElementById('instructor-content');
+  const isAdmin=(window._sessionRole==='admin');
   let newCerts=0;
-  try{
-    const nkeys=await window.storage.list('notify:',true);
-    if(nkeys&&nkeys.keys){for(const k of nkeys.keys){try{const r=await window.storage.get(k,true);if(r){const d=JSON.parse(r.value);if(!d.viewed)newCerts++;}}catch(e){}}}
-  }catch(e){}
-  const tabs=[
+  if(isAdmin){
+    try{const nkeys=await window.storage.list('notify:',true);if(nkeys&&nkeys.keys){for(const k of nkeys.keys){try{const r=await window.storage.get(k,true);if(r){const d=JSON.parse(r.value);if(!d.viewed)newCerts++;}}catch(e){}}}}catch(e){}
+  }
+  const allTabs=[
     {id:'overview',label:'📊 Overview'},{id:'active',label:'👥 Live'},
-    {id:'students',label:'🎓 Students'},
-    {id:'results',label:'📋 Results'},{id:'classes',label:'🗂 Classes'},
-    {id:'roster',label:'👤 Roster'},
-    {id:'certificates',label:`🏆 Certs${newCerts>0?` <span style="background:var(--g600);color:#fff;border-radius:99px;padding:1px 7px;font-size:9px;margin-left:4px">${newCerts}</span>`:''}`},
-    {id:'analytics',label:'📈 Analytics'},
-    {id:'settings',label:'⚙️ Settings'}
+    {id:'students',label:'🎓 Students'},{id:'results',label:'📋 Results'},
+    {id:'classes',label:'🗂 Classes'},{id:'roster',label:'👤 Roster'},
+    {id:'certificates',label:`🏆 Certs${newCerts>0?` <span style="background:var(--g600);color:#fff;border-radius:99px;padding:1px 7px;font-size:9px;margin-left:4px">${newCerts}</span>`:''}`,adminOnly:true},
+    {id:'analytics',label:'📈 Analytics',adminOnly:true},
+    {id:'settings',label:'⚙️ Settings',adminOnly:true}
   ];
+  const tabs=allTabs.filter(t=>isAdmin||!t.adminOnly);
+  if(!isAdmin&&allTabs.find(t=>t.id===adminTab&&t.adminOnly)) adminTab='overview';
+  const roleBadge=isAdmin
+    ?`<div class="badge badge-green" style="margin-bottom:8px">🛡 Admin Dashboard</div>`
+    :`<div class="badge" style="margin-bottom:8px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);color:#60a5fa">👤 Instructor View</div>`;
+  const roleName=isAdmin
+    ?`Kaylon Vaughn · <span style="color:var(--g600)">Vaughn-Porter Holdings LLC</span>`
+    :`${window._sessionInstructorName} · <span style="color:#60a5fa">Instructor Account</span>`;
   el.innerHTML=`
   <div style="margin-bottom:20px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
-    <div>
-      <div class="badge badge-green" style="margin-bottom:8px">🔒 Admin Dashboard</div>
-      <h2 style="font-size:clamp(1.3rem,3vw,1.8rem);color:var(--t100);margin-bottom:2px">Instructor Control Center</h2>
-      <p style="font-size:12px;color:var(--t500);font-family:var(--mono)">Kaylon Vaughn · <span style="color:var(--g600)">Vaughn-Porter Holdings LLC</span></p>
-    </div>
-    ${newCerts>0?`<div class="notif-banner" style="max-width:280px"><div class="notif-dot"></div><div><div style="font-size:13px;font-weight:600;color:var(--g400)">${newCerts} new certificate${newCerts>1?'s':''}</div><div style="font-size:11px;color:var(--t400)">Students passed the final exam</div></div></div>`:''}
+    <div>${roleBadge}<h2 style="font-size:clamp(1.3rem,3vw,1.8rem);color:var(--t100);margin-bottom:2px">${isAdmin?'Instructor Control Center':'Instructor Dashboard'}</h2><p style="font-size:12px;color:var(--t500);font-family:var(--mono)">${roleName}</p></div>
+    <div style="display:flex;gap:8px;align-items:center">${newCerts>0&&isAdmin?`<div class="notif-banner" style="max-width:200px"><div class="notif-dot"></div><div><div style="font-size:12px;font-weight:600;color:var(--g400)">${newCerts} new cert${newCerts>1?'s':''}</div></div></div>`:''}<button class="btn btn-ghost btn-sm" onclick="logoutDashboard()" style="font-size:11px">↩ Logout</button></div>
   </div>
   <div class="admin-tabs">${tabs.map(t=>`<button class="admin-tab${adminTab===t.id?' active':''}" onclick="switchAdminTab('${t.id}')">${t.label}</button>`).join('')}</div>
   <div id="admin-tab-content"></div>`;
@@ -1743,9 +1820,9 @@ async function loadAdminTab(tab){
   else if(tab==='results') await renderResultsTab(el);
   else if(tab==='classes') await renderClassesTab(el);
   else if(tab==='roster') await renderRosterTab(el);
-  else if(tab==='certificates') await renderCertsTab(el);
-  else if(tab==='analytics') await renderAnalyticsTab(el);
-  else if(tab==='settings') await renderSettingsTab(el);
+  else if(tab==='certificates'&&window._sessionRole==='admin') await renderCertsTab(el);
+  else if(tab==='analytics'&&window._sessionRole==='admin') await renderAnalyticsTab(el);
+  else if(tab==='settings'&&window._sessionRole==='admin') await renderSettingsTab(el);
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -2016,8 +2093,39 @@ async function renderStudentsTab(el){
   // Load classes for dropdowns
   let classes=[];
   try{const ckeys=await window.storage.list('class:',true);if(ckeys&&ckeys.keys){for(const k of ckeys.keys){try{const r=await window.storage.get(k,true);if(r)classes.push(JSON.parse(r.value));}catch(e){}}}}catch(e){}
+  // Build quick lookup — used to resolve classNumber/className fresh from live data
+  const classById={};classes.forEach(c=>{classById[c.id]=c;});
+
+  // FIX: re-read roster to get latest classId for each student, then resolve name/number
+  try{
+    const rkeys2=await window.storage.list('roster:',true);
+    if(rkeys2&&rkeys2.keys){
+      for(const k of rkeys2.keys){
+        try{
+          const r=await window.storage.get(k,true);if(!r)continue;
+          const d=JSON.parse(r.value);
+          const key=(d.name||'').toLowerCase().trim();
+          if(studentMap[key]&&d.classId) studentMap[key].classId=d.classId;
+        }catch(e){}
+      }
+    }
+  }catch(e){}
+  // Now resolve all classNumber/className from live class records
+  Object.values(studentMap).forEach(s=>{
+    if(s.classId&&classById[s.classId]){
+      s.classNumber=classById[s.classId].number;
+      s.className=classById[s.classId].name;
+    }
+  });
+
+  // Instructor scope filter
+  const instrClasses=window._sessionInstructorClasses;
 
   let students=Object.values(studentMap).sort((a,b)=>a.name.localeCompare(b.name));
+  // If instructor, only show their classes
+  if(instrClasses!==null&&instrClasses!==undefined){
+    students=students.filter(s=>s.classId&&instrClasses.includes(s.classId));
+  }
 
   // Apply search filter from viewStudentProfile
   const profileFilter=window._studentProfileFilter||'';
@@ -2090,8 +2198,6 @@ async function renderStudentsTab(el){
               <div><label class="field-label">Class Assignment</label>
                 <select class="field-input" id="sedit-class-${encodeURIComponent(s.name)}" style="cursor:pointer">
                   <option value="">Unassigned</option>
-                  ${classOpts}
-                  ${!classes.find(c=>c.id===s.classId)&&s.classId?`<option value="${s.classId}" selected>${s.classNumber} — ${s.className}</option>`:''}
                   ${classes.map(c=>`<option value="${c.id}" ${c.id===s.classId?'selected':''}>${c.number} — ${c.name}</option>`).join('')}
                 </select></div>
               <div style="display:flex;gap:8px">
@@ -2156,20 +2262,41 @@ async function saveStudentEdit(encodedName, rosterId){
   const newClassId=document.getElementById(`sedit-class-${encodedName}`)?.value||'';
   if(!newName){showToast('Name cannot be empty.');return;}
 
-  let updated=0;
-  // Update roster record if exists
+  // Resolve new class info
+  let newClassNumber='',newClassName='';
+  if(newClassId){
+    try{const cr=await window.storage.get('class:'+newClassId,true);if(cr){const cd=JSON.parse(cr.value);newClassNumber=cd.number||'';newClassName=cd.name||'';}}catch(e){}
+  }
+
+  // Update roster record
   if(rosterId){
     try{
       const r=await window.storage.get('roster:'+rosterId,true);
-      if(r){
-        const d=JSON.parse(r.value);
-        d.name=newName;d.email=newEmail;if(newClassId)d.classId=newClassId;
-        await window.storage.set('roster:'+rosterId,JSON.stringify(d),true);
-        updated++;
-      }
+      if(r){const d=JSON.parse(r.value);d.name=newName;d.email=newEmail;if(newClassId)d.classId=newClassId;await window.storage.set('roster:'+rosterId,JSON.stringify(d),true);}
     }catch(e){}
   }
-  showToast(`✓ Student updated`);
+
+  // FIX: also update ALL exam/score records so cert shows correct class
+  const oldNameLower=decodeURIComponent(encodedName).toLowerCase().trim();
+  try{
+    const skeys=await window.storage.list('score:',true);
+    if(skeys&&skeys.keys){
+      for(const k of skeys.keys){
+        try{
+          const r=await window.storage.get(k,true);if(!r)continue;
+          const d=JSON.parse(r.value);
+          if((d.name||'').toLowerCase().trim()!==oldNameLower)continue;
+          let changed=false;
+          if(newName&&d.name!==newName){d.name=newName;changed=true;}
+          if(newEmail&&d.email!==newEmail){d.email=newEmail;changed=true;}
+          if(newClassId&&d.classId!==newClassId){d.classId=newClassId;d.classNumber=newClassNumber;d.className=newClassName;changed=true;}
+          if(changed) await window.storage.set(k,JSON.stringify(d),true);
+        }catch(e){}
+      }
+    }
+  }catch(e){}
+
+  showToast('✓ Student updated — class info applied to all records');
   window._studentsSearch=newName;
   switchAdminTab('students');
 }
@@ -2731,7 +2858,89 @@ async function renderSettingsTab(el){
       <p style="font-size:12px;color:var(--t400);margin-bottom:12px">Permanently delete all student data, results, and certificates. Classes and settings are preserved.</p>
       <button class="btn btn-danger" onclick="confirmNukeAllData()">🗑 Wipe All Student Data</button>
     </div>
+  </div>
+  <div class="admin-card" style="margin-top:20px">
+    <div class="admin-card-header"><div class="admin-card-title">👤 Instructor Accounts</div></div>
+    <div class="admin-card-body">
+      <p style="font-size:12px;color:var(--t400);margin-bottom:16px">Create instructor logins with PIN codes scoped to specific classes.</p>
+      <div id="instructors-list" style="margin-bottom:12px"><div style="color:var(--t500);font-size:12px">Loading...</div></div>
+      <button class="btn btn-primary btn-sm" onclick="showAddInstructorForm()" style="font-size:12px">+ Add Instructor</button>
+      <div id="add-instructor-form" style="display:none;margin-top:16px;background:var(--s200);border:1px solid var(--border);border-radius:var(--radius);padding:16px;flex-direction:column;gap:12px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div><label class="field-label">Full Name</label><input class="field-input" id="new-instr-name" placeholder="Instructor Name"></div>
+          <div><label class="field-label">PIN</label><input class="field-input" id="new-instr-pin" placeholder="e.g. 4829" maxlength="20"></div>
+        </div>
+        <div><label class="field-label">Assign to Classes</label><div id="new-instr-classes" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px"></div></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary btn-sm" onclick="saveNewInstructor()" style="font-size:12px">💾 Save</button>
+          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('add-instructor-form').style.display='none'" style="font-size:12px">Cancel</button>
+        </div>
+      </div>
+    </div>
   </div>`;
+  loadInstructorsList();
+}
+
+async function loadInstructorsList(){
+  const container=document.getElementById('instructors-list');if(!container)return;
+  let instrs=[];
+  try{const keys=await window.storage.list('instructor:',true);if(keys&&keys.keys){for(const k of keys.keys){try{const r=await window.storage.get(k,true);if(r)instrs.push(JSON.parse(r.value));}catch(e){}}}}catch(e){}
+  let classes=[];
+  try{const ckeys=await window.storage.list('class:',true);if(ckeys&&ckeys.keys){for(const k of ckeys.keys){try{const r=await window.storage.get(k,true);if(r)classes.push(JSON.parse(r.value));}catch(e){}}}}catch(e){}
+  const classById={};classes.forEach(c=>{classById[c.id]=c;});
+  if(instrs.length===0){container.innerHTML='<div style="color:var(--t500);font-size:12px;font-family:var(--mono)">No instructor accounts yet.</div>';return;}
+  container.innerHTML=instrs.map(function(instr){
+    const classNames=(instr.classIds||[]).map(function(id){return classById[id]?classById[id].number:'?';}).join(', ')||'None';
+    const safeName=instr.name.replace(/"/g,'&quot;');
+    return '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:10px;background:var(--s200);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px">'
+      +'<div><div style="font-size:13px;font-weight:600;color:var(--t100)">👤 '+instr.name+'</div>'
+      +'<div style="font-size:11px;color:var(--t500);font-family:var(--mono)">PIN: '+instr.pin+' | Classes: '+classNames+'</div></div>'
+      +'<div style="display:flex;gap:6px">'
+      +'<button class="btn btn-ghost btn-sm" onclick="editInstructorModal(\''+instr.id+'\')" style="font-size:11px">✏️ Edit</button>'
+      +'<button class="btn btn-ghost btn-sm" onclick="deleteInstructor(\''+instr.id+'\',\''+safeName+'\')" style="font-size:11px;color:#f87171">🗑 Delete</button>'
+      +'</div></div>';
+  }).join('');
+}
+async function showAddInstructorForm(){
+  const form=document.getElementById('add-instructor-form');form.style.display='flex';
+  let classes=[];
+  try{const ckeys=await window.storage.list('class:',true);if(ckeys&&ckeys.keys){for(const k of ckeys.keys){try{const r=await window.storage.get(k,true);if(r)classes.push(JSON.parse(r.value));}catch(e){}}}}catch(e){}
+  document.getElementById('new-instr-classes').innerHTML=classes.length===0
+    ?'<span style="font-size:12px;color:var(--t500)">No classes yet.</span>'
+    :classes.map(function(c){return '<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--t300);background:var(--s300);border:1px solid var(--border);border-radius:6px;padding:6px 10px;cursor:pointer"><input type="checkbox" value="'+c.id+'" style="accent-color:var(--g500)"> '+c.number+' — '+c.name+'</label>';}).join('');
+}
+async function saveNewInstructor(){
+  const name=document.getElementById('new-instr-name').value.trim();
+  const pin=document.getElementById('new-instr-pin').value.trim();
+  if(!name||!pin){showToast('Name and PIN required.');return;}
+  const checked=[...document.querySelectorAll('#new-instr-classes input[type=checkbox]:checked')].map(cb=>cb.value);
+  const id='instr-'+Date.now();
+  await window.storage.set('instructor:'+id,JSON.stringify({id,name,pin,classIds:checked,addedAt:new Date().toISOString()}),true);
+  showToast('Instructor "'+name+'" added');
+  document.getElementById('new-instr-name').value='';document.getElementById('new-instr-pin').value='';
+  document.getElementById('add-instructor-form').style.display='none';
+  await loadInstructorsList();
+}
+async function editInstructorModal(instrId){
+  try{
+    const r=await window.storage.get('instructor:'+instrId,true);if(!r)return;
+    const instr=JSON.parse(r.value);
+    let classes=[];
+    try{const ckeys=await window.storage.list('class:',true);if(ckeys&&ckeys.keys){for(const k of ckeys.keys){try{const cr=await window.storage.get(k,true);if(cr)classes.push(JSON.parse(cr.value));}catch(e){}}}}catch(e){}
+    const newName=prompt('Instructor name:',instr.name);if(!newName)return;
+    const newPin=prompt('PIN:',instr.pin);if(!newPin)return;
+    const classLines=classes.map(function(c){return c.number+': '+c.name+' ['+c.id+']';}).join('\n');
+    const currentIds=(instr.classIds||[]).join(', ');
+    const newIdsStr=prompt('Assign class IDs (comma-separated):\n\n'+classLines+'\n\nCurrent: '+currentIds, currentIds);
+    if(newIdsStr===null)return;
+    instr.name=newName;instr.pin=newPin;instr.classIds=newIdsStr.split(',').map(s=>s.trim()).filter(Boolean);
+    await window.storage.set('instructor:'+instrId,JSON.stringify(instr),true);
+    showToast('Updated');await loadInstructorsList();
+  }catch(e){showToast('Error.');}
+}
+async function deleteInstructor(id,name){
+  if(!confirm('Delete instructor "'+name+'"?'))return;
+  try{await window.storage.delete('instructor:'+id,true);showToast('Instructor deleted.');await loadInstructorsList();}catch(e){showToast('Error.');}
 }
 
 async function saveSetting(key,inputId,msg){
