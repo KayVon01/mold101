@@ -2276,27 +2276,34 @@ async function saveStudentEdit(encodedName, rosterId){
     }catch(e){}
   }
 
-  // FIX: also update ALL exam/score records so cert shows correct class
+  // Update ALL score:, cert:, and notify: records for this student
   const oldNameLower=decodeURIComponent(encodedName).toLowerCase().trim();
-  try{
-    const skeys=await window.storage.list('score:',true);
-    if(skeys&&skeys.keys){
-      for(const k of skeys.keys){
-        try{
-          const r=await window.storage.get(k,true);if(!r)continue;
-          const d=JSON.parse(r.value);
-          if((d.name||'').toLowerCase().trim()!==oldNameLower)continue;
-          let changed=false;
-          if(newName&&d.name!==newName){d.name=newName;changed=true;}
-          if(newEmail&&d.email!==newEmail){d.email=newEmail;changed=true;}
-          if(newClassId&&d.classId!==newClassId){d.classId=newClassId;d.classNumber=newClassNumber;d.className=newClassName;changed=true;}
-          if(changed) await window.storage.set(k,JSON.stringify(d),true);
-        }catch(e){}
-      }
-    }
-  }catch(e){}
 
-  showToast('✓ Student updated — class info applied to all records');
+  async function patchRecords(prefix){
+    try{
+      const keys=await window.storage.list(prefix,true);
+      if(keys&&keys.keys){
+        for(const k of keys.keys){
+          try{
+            const r=await window.storage.get(k,true);if(!r)continue;
+            const d=JSON.parse(r.value);
+            if((d.name||'').toLowerCase().trim()!==oldNameLower)continue;
+            let changed=false;
+            if(newName&&d.name!==newName){d.name=newName;changed=true;}
+            if(newEmail&&d.email!==newEmail){d.email=newEmail;changed=true;}
+            if(newClassId&&d.classId!==newClassId){d.classId=newClassId;d.classNumber=newClassNumber;d.className=newClassName;changed=true;}
+            if(changed) await window.storage.set(k,JSON.stringify(d),true);
+          }catch(e){}
+        }
+      }
+    }catch(e){}
+  }
+
+  await patchRecords('score:');
+  await patchRecords('cert:');
+  await patchRecords('notify:');
+
+  showToast('Student updated — all certificates refreshed.');
   window._studentsSearch=newName;
   switchAdminTab('students');
 }
@@ -2754,18 +2761,40 @@ function printCertFromAdmin(r){
   state.studentName=origName;state.lastExamResult=origResult;state.currentClass=origClass;
 }
 
-function previewCertFromAdmin(r){
+async function _fetchLiveCertRecord(r){
+  // Always re-read from storage so edits to name/class are reflected immediately
+  if(r.certId){
+    try{
+      const live=await window.storage.get('cert:'+r.certId,true);
+      if(live) return JSON.parse(live.value);
+    }catch(e){}
+  }
+  // Fallback: try score: records matching this certId
+  if(r.certId){
+    try{
+      const skeys=await window.storage.list('score:',true);
+      if(skeys&&skeys.keys){
+        for(const k of skeys.keys){
+          try{
+            const res=await window.storage.get(k,true);
+            if(res){const d=JSON.parse(res.value);if(d.certId===r.certId)return d;}
+          }catch(e){}
+        }
+      }
+    }catch(e){}
+  }
+  return r; // last resort: use what was passed in
+}
+
+async function previewCertFromAdmin(r){
+  const live=await _fetchLiveCertRecord(r);
   const origName=state.studentName,origResult=state.lastExamResult,origClass=state.currentClass;
-  state.studentName=r.name;state.lastExamResult=r;state.currentClass={number:r.classNumber,name:r.className};
+  state.studentName=live.name;state.lastExamResult=live;state.currentClass={number:live.classNumber,name:live.className};
   openCertModal();
-  // Show download btn for instructor only
   const dlBtn=document.getElementById('pdf-download-btn');
   if(dlBtn) dlBtn.style.display='inline-flex';
-  // After modal opens, update the email btn to show student email
   const emailBtn=document.getElementById('modal-email-btn');
-  if(emailBtn) emailBtn.style.display=r.email?'inline-flex':'none';
-  // Restore state after modal closes (override closeCertModal temporarily)
-  const origClose=window._adminCertClose;
+  if(emailBtn) emailBtn.style.display=live.email?'inline-flex':'none';
   window._adminCertRestoreState=()=>{
     state.studentName=origName;state.lastExamResult=origResult;state.currentClass=origClass;
     const dlBtn=document.getElementById('pdf-download-btn');
@@ -2775,18 +2804,19 @@ function previewCertFromAdmin(r){
 
 async function downloadCertFromAdmin(r){
   try{
+    const live=await _fetchLiveCertRecord(r);
     const data={
-      name:r.name||'Student',
-      pct:r.pct||0, score:r.score||0, total:r.total||30,
-      classNumber:r.classNumber||'N/A',
-      className:r.className||'',
-      certId:r.certId||'',
-      expiryDate:r.expiryDate||''
+      name:live.name||'Student',
+      pct:live.pct||0, score:live.score||0, total:live.total||30,
+      classNumber:live.classNumber||'N/A',
+      className:live.className||'',
+      certId:live.certId||'',
+      expiryDate:live.expiryDate||''
     };
     const pdf=buildCertPDF(data);
-    const safeName=(r.name||'certificate').replace(/\s+/g,'_');
-    pdf.save(`Mold_Certificate_${safeName}.pdf`);
-    showToast(`✓ PDF downloaded for ${r.name}`);
+    const safeName=(live.name||'certificate').replace(/\s+/g,'_');
+    pdf.save('Mold_Certificate_'+safeName+'.pdf');
+    showToast('PDF downloaded for '+live.name);
   }catch(e){showToast('PDF failed — use Print instead.');}
 }
 
