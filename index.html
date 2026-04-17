@@ -1220,6 +1220,170 @@ async function loadProgress(name){
   return false;
 }
 
+function normalizeStudentName(name){
+  return (name||'').toLowerCase().trim().replace(/\s+/g,' ');
+}
+
+function getStudentProgressKey(name){
+  return 'progress:'+(name||'').toLowerCase().trim().replace(/\s+/g,'-').substring(0,40);
+}
+
+async function loadClassesMap(){
+  const map={};
+  try{
+    const keys=await window.storage.list('class:',true);
+    if(keys&&keys.keys){
+      for(const k of keys.keys){
+        try{
+          const r=await window.storage.get(k,true);
+          if(r){
+            const c=JSON.parse(r.value);
+            if(c?.id) map[c.id]=c;
+          }
+        }catch(e){}
+      }
+    }
+  }catch(e){}
+  return map;
+}
+
+function buildClassSnapshot(classId, classesMap={}, fallback={}){
+  if(classId==='self-study'){
+    return {id:'self-study',number:'N/A',name:'Self-Study',date:fallback.date||''};
+  }
+  const cls=classId?classesMap[classId]:null;
+  return {
+    id:classId||fallback.classId||'',
+    number:cls?.number||fallback.classNumber||fallback.number||'N/A',
+    name:cls?.name||fallback.className||fallback.name||(classId?'':''),
+    date:cls?.date||fallback.date||'',
+    desc:cls?.desc||fallback.desc||''
+  };
+}
+
+function applyClassSnapshot(record, snap){
+  record.classId=snap.id||'';
+  record.classNumber=snap.number||'N/A';
+  record.className=snap.name||'';
+  return record;
+}
+
+function decorateRecordWithCurrentClass(record, classesMap={}){
+  if(!record) return record;
+  return applyClassSnapshot({...record}, buildClassSnapshot(record.classId, classesMap, record));
+}
+
+async function syncStudentData(oldName, updates={}){
+  const oldKey=normalizeStudentName(oldName);
+  if(!oldKey) return 0;
+
+  let updated=0;
+  let classSnap=null;
+  if(Object.prototype.hasOwnProperty.call(updates,'classId')){
+    classSnap=buildClassSnapshot(updates.classId, await loadClassesMap(), updates);
+  }
+
+  const applyUpdates=(record)=>{
+    let changed=false;
+    if(updates.name&&record.name!==updates.name){
+      record.name=updates.name;
+      changed=true;
+    }
+    if(Object.prototype.hasOwnProperty.call(updates,'email')&&(record.email||'')!==(updates.email||'')){
+      record.email=updates.email||'';
+      changed=true;
+    }
+    if(classSnap){
+      if((record.classId||'')!==classSnap.id||(record.classNumber||'N/A')!==classSnap.number||(record.className||'')!==classSnap.name){
+        applyClassSnapshot(record,classSnap);
+        changed=true;
+      }
+    }
+    return changed;
+  };
+
+  for(const prefix of ['score:','cert:','notify:','active:','newlogin:']){
+    try{
+      const keys=await window.storage.list(prefix,true);
+      if(keys&&keys.keys){
+        for(const k of keys.keys){
+          try{
+            const res=await window.storage.get(k,true);
+            if(!res) continue;
+            const data=JSON.parse(res.value);
+            if(normalizeStudentName(data.name)!==oldKey) continue;
+            if(applyUpdates(data)){
+              await window.storage.set(k,JSON.stringify(data),true);
+              updated++;
+            }
+          }catch(e){}
+        }
+      }
+    }catch(e){}
+  }
+
+  if(updates.name&&normalizeStudentName(updates.name)!==oldKey){
+    const oldProgressKey=getStudentProgressKey(oldName);
+    const newProgressKey=getStudentProgressKey(updates.name);
+    try{
+      const progress=await window.storage.get(oldProgressKey,true);
+      if(progress){
+        await window.storage.set(newProgressKey,progress.value,true);
+        if(newProgressKey!==oldProgressKey){
+          try{await window.storage.delete(oldProgressKey,true);}catch(e){}
+        }
+      }
+    }catch(e){}
+  }
+
+  if(normalizeStudentName(state.studentName)===oldKey){
+    if(updates.name) state.studentName=updates.name;
+    if(Object.prototype.hasOwnProperty.call(updates,'email')) state.studentEmail=updates.email||'';
+    if(classSnap) state.currentClass={id:classSnap.id,number:classSnap.number,name:classSnap.name,date:classSnap.date||''};
+    if(state.lastExamResult){
+      const nextResult={...state.lastExamResult};
+      if(applyUpdates(nextResult)) state.lastExamResult=nextResult;
+    }
+  }
+
+  return updated;
+}
+
+async function syncClassRecords(classId){
+  if(!classId) return 0;
+  const classSnap=buildClassSnapshot(classId, await loadClassesMap(), {classId});
+  let updated=0;
+  for(const prefix of ['score:','cert:','notify:','active:','newlogin:']){
+    try{
+      const keys=await window.storage.list(prefix,true);
+      if(keys&&keys.keys){
+        for(const k of keys.keys){
+          try{
+            const res=await window.storage.get(k,true);
+            if(!res) continue;
+            const data=JSON.parse(res.value);
+            if((data.classId||'')!==classId) continue;
+            if((data.classNumber||'N/A')!==classSnap.number||(data.className||'')!==classSnap.name){
+              applyClassSnapshot(data,classSnap);
+              await window.storage.set(k,JSON.stringify(data),true);
+              updated++;
+            }
+          }catch(e){}
+        }
+      }
+    }catch(e){}
+  }
+
+  if(state.currentClass?.id===classId){
+    state.currentClass={id:classSnap.id,number:classSnap.number,name:classSnap.name,date:classSnap.date||''};
+  }
+  if(state.lastExamResult?.classId===classId){
+    state.lastExamResult=applyClassSnapshot({...state.lastExamResult},classSnap);
+  }
+
+  return updated;
+}
+
 // ═══════════════════════════════════════════════════════════════════
 // INSTRUCTOR IMPERSONATION
 // ═══════════════════════════════════════════════════════════════════
@@ -1573,48 +1737,98 @@ function renderResults(score,total){
 }
 
 // ── CERTIFICATE PREVIEW MODAL ──
+function getCertBranding(issuer=window._certIssuer||'cdc'){
+  const isVph=issuer==='vph';
+  return {
+    isVph,
+    orgName:isVph?'Vaughn-Porter Holdings LLC':'Cornerstone Community Development Corporation',
+    footerOrg:isVph?'VAUGHN-PORTER HOLDINGS LLC':'CORNERSTONE COMMUNITY DEVELOPMENT CORPORATION',
+    orgColor:isVph?'#15803d':'#92400e',
+    orgFont:isVph?'var(--mono)':'Bebas Neue,sans-serif',
+    orgFontFamily:isVph?'IBM Plex Mono,monospace':'Bebas Neue,sans-serif',
+    orgSize:isVph?'0.75rem':'1.05rem',
+    logoEl:isVph
+      ?`<img src="${VPH_LOGO_SRC}" style="width:52px;height:52px;object-fit:contain" alt="VPH">`
+      :`<img src="${CDC_LOGO_B64}" style="width:60px;height:60px;border-radius:50%;object-fit:cover" alt="CDC">`,
+    logoSrc:isVph?VPH_LOGO_SRC:CDC_LOGO_B64,
+    logoImgStyle:isVph?'width:52px;height:52px;object-fit:contain':'width:60px;height:60px;border-radius:50%;object-fit:cover'
+  };
+}
+
+function getActiveCertData(source={}){
+  const r=source.result||state.lastExamResult||{};
+  const cls=source.classData||state.currentClass||{};
+  return {
+    result:r,
+    classData:cls,
+    name:source.name||state.studentName||r.name||'Student',
+    pct:r.pct||0,
+    score:r.score||0,
+    total:r.total||30,
+    today:new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}),
+    certId:r.certId||'',
+    classNumber:cls.number||r.classNumber||'N/A',
+    className:cls.name||r.className||'Self-Study',
+    expiryDate:r.expiryDate?getCertExpiry(r.timestamp).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}):'N/A'
+  };
+}
+
+async function getInstructorNotificationEmail(){
+  let email=INSTRUCTOR_EMAIL;
+  try{
+    const s=await window.storage.get('settings:instructor-email',true);
+    if(s&&s.value) email=s.value;
+  }catch(e){}
+  return email;
+}
+
+function buildCertMailtoBody(r, closingLine='Please return to the course portal to download your certificate.'){
+  return encodeURIComponent(`Congratulations ${r.name}!\n\nYou passed the Advanced Mold Assessment & Green Remediation exam.\n\nScore: ${r.pct}% (${r.score}/${r.total})\nClass: ${r.classNumber} — ${r.className}\nDate: ${new Date(r.timestamp).toLocaleDateString()}\nCert ID: ${r.certId}\n\n${closingLine}`);
+}
+
+function withAdminCertState(record, action){
+  const origName=state.studentName,origResult=state.lastExamResult,origClass=state.currentClass;
+  state.studentName=record.name;
+  state.lastExamResult=record;
+  state.currentClass={id:record.classId||'',number:record.classNumber,name:record.className};
+  try{
+    return action();
+  } finally {
+    state.studentName=origName;
+    state.lastExamResult=origResult;
+    state.currentClass=origClass;
+  }
+}
+
 function buildCertPreviewHTML(){
-  const r=state.lastExamResult||{};const cls=state.currentClass||{};
-  const name=state.studentName||'Student';
-  const pct=r.pct||0;const score=r.score||0;const total=r.total||30;
-  const today=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-  const certId=r.certId||'';
-  const expiryDate=r.expiryDate?getCertExpiry(r.timestamp).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}):'N/A';
-  const isVph=(window._certIssuer==='vph');
-  const orgName=isVph?'Vaughn-Porter Holdings LLC':'Cornerstone Community Development Corporation';
-  const footerOrg=isVph?'VAUGHN-PORTER HOLDINGS LLC':'CORNERSTONE COMMUNITY DEVELOPMENT CORPORATION';
-  const logoEl=isVph
-    ?`<img src="${VPH_LOGO_SRC}" style="width:52px;height:52px;object-fit:contain" alt="VPH">`
-    :`<img src="${CDC_LOGO_B64}" style="width:60px;height:60px;border-radius:50%;object-fit:cover" alt="CDC">`;
-  const orgColor=isVph?'#15803d':'#78350f';
-  const orgFont=isVph?'var(--mono)':'Bebas Neue,sans-serif';
-  const orgSize=isVph?'0.75rem':'1.05rem';
+  const cert=getActiveCertData();
+  const branding=getCertBranding();
   return `<div class="cert-preview">
     <div class="wm">CERTIFIED</div>
     <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:6px">
-      ${logoEl}
+      ${branding.logoEl}
     </div>
-    <div style="font-family:${orgFont};font-size:${orgSize};letter-spacing:0.12em;color:${orgColor};margin-bottom:1px">${orgName}</div>
-    ${!isVph?'<div style="font-family:var(--mono);font-size:8px;letter-spacing:0.15em;color:#92400e;opacity:0.7;margin-bottom:4px">IN COOPERATION WITH VAUGHN-PORTER HOLDINGS LLC</div>':''}
+    <div style="font-family:${branding.orgFont};font-size:${branding.orgSize};letter-spacing:0.12em;color:${branding.isVph?'#15803d':'#78350f'};margin-bottom:1px">${branding.orgName}</div>
+    ${!branding.isVph?'<div style="font-family:var(--mono);font-size:8px;letter-spacing:0.15em;color:#92400e;opacity:0.7;margin-bottom:4px">IN COOPERATION WITH VAUGHN-PORTER HOLDINGS LLC</div>':''}
     <div class="c-top">Certificate of Completion</div>
     <div class="c-course">Advanced Mold Assessment &amp; Green Remediation Workshop</div>
     <div class="c-div"></div>
     <div class="c-by">This certifies that</div>
-    <div class="c-name">${name}</div>
+    <div class="c-name">${cert.name}</div>
     <div class="c-desc">has successfully completed all three modules and passed the<br>comprehensive final examination with a score of</div>
-    <div class="c-score">${pct}% <span style="font-size:1.2rem;color:#64748b">(${score}/${total})</span></div>
+    <div class="c-score">${cert.pct}% <span style="font-size:1.2rem;color:#64748b">(${cert.score}/${cert.total})</span></div>
     <div class="c-meta">
-      <div><div class="c-meta-label">Date Issued</div><div class="c-meta-val">${today}</div></div>
-      <div><div class="c-meta-label">Class No.</div><div class="c-meta-val">${cls.number||'N/A'}</div></div>
-      <div><div class="c-meta-label">Class Name</div><div class="c-meta-val">${cls.name||'Self-Study'}</div></div>
-      <div><div class="c-meta-label">Valid Through</div><div class="c-meta-val">${expiryDate}</div></div>
+      <div><div class="c-meta-label">Date Issued</div><div class="c-meta-val">${cert.today}</div></div>
+      <div><div class="c-meta-label">Class No.</div><div class="c-meta-val">${cert.classNumber}</div></div>
+      <div><div class="c-meta-label">Class Name</div><div class="c-meta-val">${cert.className}</div></div>
+      <div><div class="c-meta-label">Valid Through</div><div class="c-meta-val">${cert.expiryDate}</div></div>
       <div><div class="c-meta-label">CEU Hours</div><div class="c-meta-val">5.0 Hours</div></div>
     </div>
     <div class="c-sigs">
       <div><div class="c-sig-line">INSTRUCTOR SIGNATURE / Kaylon Vaughn</div></div>
       <div><div class="c-sig-line">STUDENT SIGNATURE</div></div>
     </div>
-    <div class="c-footer">${footerOrg} · EPA/OSHA ALIGNED · IICRC S520 REFERENCED · CERT ID: ${certId}</div>
+    <div class="c-footer">${branding.footerOrg} · EPA/OSHA ALIGNED · IICRC S520 REFERENCED · CERT ID: ${cert.certId}</div>
   </div>`;
 }
 
@@ -1644,7 +1858,7 @@ function closeCertModal(){
 document.getElementById('cert-modal').addEventListener('click',function(e){if(e.target===this)closeCertModal();});
 document.getElementById('score-editor-modal').addEventListener('click',function(e){if(e.target===this)closeScoreEditor();});
 
-function printCertificate(){
+function printCertificateLegacy(){
   const r=state.lastExamResult||{};const cls=state.currentClass||{};
   const name=state.studentName||'Student';
   const pct=r.pct||0;const score=r.score||0;const total=r.total||30;
@@ -1776,8 +1990,7 @@ async function printCertificate(){
 
 async function autoNotifyInstructor(){
   const r=state.lastExamResult;if(!r||!r.passed)return;
-  let email=INSTRUCTOR_EMAIL;
-  try{const s=await window.storage.get('settings:instructor-email',true);if(s&&s.value)email=s.value;}catch(e){}
+  const email=await getInstructorNotificationEmail();
   const sub=encodeURIComponent(`✅ Certificate Earned: ${r.name} — ${r.classNumber} ${r.className}`);
   const body=encodeURIComponent(`${r.name} passed the Advanced Mold Assessment & Green Remediation exam.\n\nScore: ${r.pct}% (${r.score}/${r.total})\nClass: ${r.classNumber} — ${r.className}\nDate: ${new Date(r.timestamp).toLocaleDateString()}\nCert ID: ${r.certId}\nStudent Email: ${r.email||'not provided'}\n\nLog in to the Instructor Dashboard to view and print the certificate.`);
   window.location.href=`mailto:${email}?subject=${sub}&body=${body}`;
@@ -1785,8 +1998,7 @@ async function autoNotifyInstructor(){
 
 async function notifyInstructor(){
   const r=state.lastExamResult;if(!r)return;
-  let email=INSTRUCTOR_EMAIL;
-  try{const s=await window.storage.get('settings:instructor-email',true);if(s&&s.value)email=s.value;}catch(e){}
+  const email=await getInstructorNotificationEmail();
   const sub=encodeURIComponent(`Certificate Earned: ${r.name} — ${r.classNumber} ${r.className}`);
   const body=encodeURIComponent(`${r.name} passed the Advanced Mold Assessment & Green Remediation exam.\n\nScore: ${r.pct}% (${r.score}/${r.total})\nClass: ${r.classNumber} — ${r.className}\nDate: ${new Date(r.timestamp).toLocaleDateString()}\nCert ID: ${r.certId}\nStudent Email: ${r.email||'not provided'}`);
   window.location.href=`mailto:${email}?subject=${sub}&body=${body}`;
@@ -1961,6 +2173,7 @@ async function addRosterStudent(){
   const record={id,name,email:email||'',classId,addedAt:new Date().toISOString()};
   try{
     await window.storage.set('roster:'+id,JSON.stringify(record),true);
+    await syncStudentData(name,{name,email:email||'',classId});
     showToast(`✓ ${name} added to roster`);
     switchAdminTab('roster');
   }catch(e){alert('Failed to save.');}
@@ -1975,7 +2188,11 @@ async function bulkAddRosterStudents(){
   let added=0;
   for(const name of names){
     const id='student-'+Date.now().toString(36)+'-'+Math.random().toString(36).substr(2,4);
-    try{await window.storage.set('roster:'+id,JSON.stringify({id,name,email:'',classId,addedAt:new Date().toISOString()}),true);added++;}catch(e){}
+    try{
+      await window.storage.set('roster:'+id,JSON.stringify({id,name,email:'',classId,addedAt:new Date().toISOString()}),true);
+      await syncStudentData(name,{name,email:'',classId});
+      added++;
+    }catch(e){}
     await new Promise(r=>setTimeout(r,10));
   }
   showToast(`✓ ${added} student${added!==1?'s':''} added`);
@@ -1989,7 +2206,9 @@ async function reassignStudent(studentId, newClassId){
     const d=JSON.parse(r.value);
     d.classId=newClassId;
     await window.storage.set('roster:'+studentId,JSON.stringify(d),true);
+    await syncStudentData(d.name,{name:d.name,email:d.email||'',classId:newClassId});
     showToast('Class updated.');
+    switchAdminTab('roster');
   }catch(e){}
 }
 
@@ -2054,6 +2273,7 @@ async function confirmAddLiveToRoster(name){
   const id='student-'+Date.now().toString(36)+'-'+Math.random().toString(36).substr(2,4);
   try{
     await window.storage.set('roster:'+id,JSON.stringify({id,name,email,classId,addedAt:new Date().toISOString()}),true);
+    await syncStudentData(name,{name,email,classId});
     closeCertModal();
     showToast(`✓ ${name} added to roster`);
   }catch(e){alert('Failed to save.');}
@@ -2074,6 +2294,8 @@ async function renderStudentsTab(el){
 
   // Gather all unique students from score records + roster
   const studentMap={}; // keyed by normalised name
+  const classesMap=await loadClassesMap();
+  const classes=Object.values(classesMap).sort((a,b)=>a.number.localeCompare(b.number));
 
   // From exam results
   try{
@@ -2112,6 +2334,7 @@ async function renderStudentsTab(el){
             studentMap[key]={name:d.name,email:d.email||'',classId:d.classId||'',classNumber:'',className:'',exams:[],firstSeen:d.addedAt||'',lastSeen:'',rosterId:d.id};
           } else {
             studentMap[key].rosterId=d.id;
+            if(d.classId) studentMap[key].classId=d.classId;
             if(d.email&&!studentMap[key].email) studentMap[key].email=d.email;
           }
         }catch(e){}
@@ -2119,9 +2342,12 @@ async function renderStudentsTab(el){
     }
   }catch(e){}
 
-  // Load classes for dropdowns
-  let classes=[];
-  try{const ckeys=await window.storage.list('class:',true);if(ckeys&&ckeys.keys){for(const k of ckeys.keys){try{const r=await window.storage.get(k,true);if(r)classes.push(JSON.parse(r.value));}catch(e){}}}}catch(e){}
+  Object.values(studentMap).forEach(s=>{
+    const snap=buildClassSnapshot(s.classId, classesMap, s);
+    s.classId=snap.id;
+    s.classNumber=snap.number;
+    s.className=snap.name;
+  });
 
   let students=Object.values(studentMap).sort((a,b)=>a.name.localeCompare(b.name));
 
@@ -2257,24 +2483,26 @@ function toggleStudentExpand(encodedName){
 }
 
 async function saveStudentEdit(encodedName, rosterId){
+  const originalName=decodeURIComponent(encodedName);
   const newName=document.getElementById(`sedit-name-${encodedName}`)?.value.trim();
   const newEmail=document.getElementById(`sedit-email-${encodedName}`)?.value.trim()||'';
   const newClassId=document.getElementById(`sedit-class-${encodedName}`)?.value||'';
   if(!newName){showToast('Name cannot be empty.');return;}
 
-  let updated=0;
   // Update roster record if exists
   if(rosterId){
     try{
       const r=await window.storage.get('roster:'+rosterId,true);
       if(r){
         const d=JSON.parse(r.value);
-        d.name=newName;d.email=newEmail;if(newClassId)d.classId=newClassId;
+        d.name=newName;
+        d.email=newEmail;
+        d.classId=newClassId;
         await window.storage.set('roster:'+rosterId,JSON.stringify(d),true);
-        updated++;
       }
     }catch(e){}
   }
+  await syncStudentData(originalName,{name:newName,email:newEmail,classId:newClassId});
   showToast(`✓ Student updated`);
   window._studentsSearch=newName;
   switchAdminTab('students');
@@ -2291,6 +2519,7 @@ async function addHistoricalToRoster(encodedName){
   const id='student-'+Date.now().toString(36)+'-'+Math.random().toString(36).substr(2,4);
   try{
     await window.storage.set('roster:'+id,JSON.stringify({id,name,email,classId,addedAt:new Date().toISOString()}),true);
+    await syncStudentData(name,{name,email,classId});
     showToast(`✓ ${name} added to roster`);
     switchAdminTab('students');
   }catch(e){alert('Failed to save.');}
@@ -2311,7 +2540,9 @@ async function lookupRosterClass(studentName){
 
 async function renderOverviewTab(el){
   let records=[];
+  const classesMap=await loadClassesMap();
   try{const keys=await window.storage.list('score:',true);if(keys&&keys.keys){for(const k of keys.keys){try{const r=await window.storage.get(k,true);if(r)records.push(JSON.parse(r.value));}catch(e){}}}}catch(e){}
+  records=records.map(r=>decorateRecordWithCurrentClass(r,classesMap));
   const total=records.length,passed=records.filter(r=>r.passed).length;
   const avg=total>0?Math.round(records.reduce((s,r)=>s+r.pct,0)/total):0;
   const classCounts={};records.forEach(r=>{const k=r.classNumber||'N/A';classCounts[k]=(classCounts[k]||0)+1;});
@@ -2349,14 +2580,15 @@ async function renderOverviewTab(el){
 async function renderActiveTab(el){
   el.innerHTML='<div style="text-align:center;padding:24px;color:var(--t400);font-family:var(--mono);font-size:12px">Loading...</div>';
   let sessions=[],logins=[];
+  const classesMap=await loadClassesMap();
   try{
     const keys=await window.storage.list('active:',true);
-    if(keys&&keys.keys){const now=Date.now();for(const k of keys.keys){try{const r=await window.storage.get(k,true);if(r){const d=JSON.parse(r.value);const age=(now-new Date(d.lastSeen).getTime())/60000;if(age<5)sessions.push({...d,ageMin:Math.round(age)});}}catch(e){}}}
+    if(keys&&keys.keys){const now=Date.now();for(const k of keys.keys){try{const r=await window.storage.get(k,true);if(r){const d=decorateRecordWithCurrentClass(JSON.parse(r.value),classesMap);const age=(now-new Date(d.lastSeen).getTime())/60000;if(age<5)sessions.push({...d,ageMin:Math.round(age)});}}catch(e){}}}
   }catch(e){}
   try{
     const lkeys=await window.storage.list('newlogin:',true);
     const cutoff=Date.now()-24*60*60*1000;
-    if(lkeys&&lkeys.keys){for(const k of lkeys.keys){try{const r=await window.storage.get(k,true);if(r){const d=JSON.parse(r.value);if(new Date(d.timestamp).getTime()>cutoff)logins.push(d);}}catch(e){}}}
+    if(lkeys&&lkeys.keys){for(const k of lkeys.keys){try{const r=await window.storage.get(k,true);if(r){const d=decorateRecordWithCurrentClass(JSON.parse(r.value),classesMap);if(new Date(d.timestamp).getTime()>cutoff)logins.push(d);}}catch(e){}}}
   }catch(e){}
   logins.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
   sessions.sort((a,b)=>new Date(b.lastSeen)-new Date(a.lastSeen));
@@ -2451,6 +2683,8 @@ async function renderResultsTab(el){
     const keys=await window.storage.list('score:',true);if(keys&&keys.keys){for(const k of keys.keys){try{const r=await window.storage.get(k,true);if(r)records.push(JSON.parse(r.value));}catch(e){}}}
     const ckeys=await window.storage.list('class:',true);if(ckeys&&ckeys.keys){for(const k of ckeys.keys){try{const r=await window.storage.get(k,true);if(r)classes.push(JSON.parse(r.value));}catch(e){}}}
   }catch(e){}
+  const classesMap=Object.fromEntries(classes.map(c=>[c.id,c]));
+  records=records.map(r=>decorateRecordWithCurrentClass(r,classesMap));
   records.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
   window._allRecords=records;
   const filterClass=window._resultsFilter||'all';
@@ -2664,7 +2898,13 @@ async function createClass(){
   const isEdit=!!window._editingClassId;
   const id=window._editingClassId||'class-'+Date.now().toString(36);
   window._editingClassId=null;
-  try{await window.storage.set('class:'+id,JSON.stringify({id,number:num,name,date,desc:desc||''}),true);await loadLoginClasses();showToast(isEdit?'Class updated!':'Class created!');switchAdminTab('classes');}
+  try{
+    await window.storage.set('class:'+id,JSON.stringify({id,number:num,name,date,desc:desc||''}),true);
+    if(isEdit) await syncClassRecords(id);
+    await loadLoginClasses();
+    showToast(isEdit?'Class updated!':'Class created!');
+    switchAdminTab('classes');
+  }
   catch(e){alert('Failed to save class.');}
 }
 async function editClass(id){
@@ -2692,9 +2932,10 @@ async function deleteClass(id){
 
 async function renderCertsTab(el){
   let certs=[];
+  const classesMap=await loadClassesMap();
   try{
     const keys=await window.storage.list('cert:',true);
-    if(keys&&keys.keys){for(const k of keys.keys){try{const r=await window.storage.get(k,true);if(r)certs.push(JSON.parse(r.value));}catch(e){}}}
+    if(keys&&keys.keys){for(const k of keys.keys){try{const r=await window.storage.get(k,true);if(r)certs.push(decorateRecordWithCurrentClass(JSON.parse(r.value),classesMap));}catch(e){}}}
     const nkeys=await window.storage.list('notify:',true);
     if(nkeys&&nkeys.keys){for(const k of nkeys.keys){try{const r=await window.storage.get(k,true);if(r){const d=JSON.parse(r.value);d.viewed=true;await window.storage.set(k,JSON.stringify(d),true);}}catch(e){}}}
   }catch(e){}
@@ -2727,41 +2968,31 @@ async function renderCertsTab(el){
 }
 
 function printCertFromAdmin(r){
-  const origName=state.studentName,origResult=state.lastExamResult,origClass=state.currentClass;
-  state.studentName=r.name;state.lastExamResult=r;state.currentClass={number:r.classNumber,name:r.className};
-  printCertificate();
-  state.studentName=origName;state.lastExamResult=origResult;state.currentClass=origClass;
+  return withAdminCertState(r,()=>printCertificate());
 }
 
 function previewCertFromAdmin(r){
   const origName=state.studentName,origResult=state.lastExamResult,origClass=state.currentClass;
-  state.studentName=r.name;state.lastExamResult=r;state.currentClass={number:r.classNumber,name:r.className};
+  state.studentName=r.name;
+  state.lastExamResult=r;
+  state.currentClass={id:r.classId||'',number:r.classNumber,name:r.className};
   openCertModal();
-  // Show download btn for instructor only
   const dlBtn=document.getElementById('pdf-download-btn');
   if(dlBtn) dlBtn.style.display='inline-flex';
-  // After modal opens, update the email btn to show student email
   const emailBtn=document.getElementById('modal-email-btn');
   if(emailBtn) emailBtn.style.display=r.email?'inline-flex':'none';
-  // Restore state after modal closes (override closeCertModal temporarily)
-  const origClose=window._adminCertClose;
   window._adminCertRestoreState=()=>{
-    state.studentName=origName;state.lastExamResult=origResult;state.currentClass=origClass;
-    const dlBtn=document.getElementById('pdf-download-btn');
-    if(dlBtn) dlBtn.style.display='none';
+    state.studentName=origName;
+    state.lastExamResult=origResult;
+    state.currentClass=origClass;
+    const pdfBtn=document.getElementById('pdf-download-btn');
+    if(pdfBtn) pdfBtn.style.display='none';
   };
 }
 
 async function downloadCertFromAdmin(r){
   try{
-    const data={
-      name:r.name||'Student',
-      pct:r.pct||0, score:r.score||0, total:r.total||30,
-      classNumber:r.classNumber||'N/A',
-      className:r.className||'',
-      certId:r.certId||'',
-      expiryDate:r.expiryDate||''
-    };
+    const data=getActiveCertData({result:r,classData:{number:r.classNumber,name:r.className},name:r.name});
     const pdf=buildCertPDF(data);
     const safeName=(r.name||'certificate').replace(/\s+/g,'_');
     pdf.save(`Mold_Certificate_${safeName}.pdf`);
@@ -3141,16 +3372,7 @@ async function downloadCertPDF(){
   const btn=document.getElementById('pdf-download-btn');
   if(btn){btn.disabled=true;btn.textContent='⏳ Building PDF...';}
   try{
-    const r=state.lastExamResult||{};
-    const cls=state.currentClass||{};
-    const data={
-      name:state.studentName||'Student',
-      pct:r.pct||0, score:r.score||0, total:r.total||30,
-      classNumber:cls.number||r.classNumber||'N/A',
-      className:cls.name||r.className||'',
-      certId:r.certId||'',
-      expiryDate:r.expiryDate||''
-    };
+    const data=getActiveCertData();
     const pdf=buildCertPDF(data);
     pdf.save(`Mold_Certificate_${(data.name).replace(/\s+/g,'_')}.pdf`);
     showToast('✓ PDF downloaded!');
@@ -3266,11 +3488,12 @@ async function renderAnalyticsTab(el){
     if(!scoreKeys||!scoreKeys.keys||scoreKeys.keys.length===0){
       el.innerHTML=`<div style="padding:40px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--t500)">No exam data yet. Analytics will appear after students complete the exam.</div>`;return;
     }
+    const classesMap=await loadClassesMap();
     const classMap={};let totalAttempts=0,totalPassed=0;
     for(const k of scoreKeys.keys){
       try{
         const r=await window.storage.get(k,true);if(!r)continue;
-        const d=JSON.parse(r.value);totalAttempts++;if(d.passed)totalPassed++;
+        const d=decorateRecordWithCurrentClass(JSON.parse(r.value),classesMap);totalAttempts++;if(d.passed)totalPassed++;
         const cn=d.classNumber||'Self-Study';
         if(!classMap[cn])classMap[cn]={name:d.className||cn,attempts:0,passed:0,totalPct:0};
         classMap[cn].attempts++;if(d.passed)classMap[cn].passed++;classMap[cn].totalPct+=d.pct;
