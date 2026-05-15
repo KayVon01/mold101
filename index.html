@@ -142,7 +142,8 @@ body.impersonating .screen{padding-top:94px}
 .lesson-body ol li{counter-increment:ol-counter}
 .lesson-body ol li::before{content:counter(ol-counter);position:absolute;left:0;color:var(--g500);font-family:var(--mono);font-size:11px;font-weight:700;top:6px}
 .lesson-body strong{color:var(--t100);font-weight:600}
-.lesson-body .diagram{background:var(--bg2);border:1px dashed rgba(34,197,94,0.25);border-radius:var(--radius);padding:32px;text-align:center;margin:20px 0}
+.lesson-body .diagram{background:var(--bg2);border:1px solid rgba(34,197,94,0.18);border-radius:var(--radius);padding:12px;text-align:center;margin:20px 0;overflow:hidden}
+.lesson-body .diagram img{display:block;width:100%;height:auto;border-radius:calc(var(--radius) - 1px)}
 .lesson-body .diagram-title{font-family:var(--mono);font-size:12px;color:var(--g500);margin-bottom:6px;font-weight:600}
 .lesson-body .diagram-desc{font-size:12px;color:var(--t500)}
 .lesson-nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-top:1px solid var(--border);margin-top:40px}
@@ -436,9 +437,9 @@ body.light-mode .toast{background:#fff;color:#16a34a}
       <!-- LOGO / HEADER -->
       <div style="text-align:center;margin-bottom:24px">
         <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyODAgMzAwIj4KPGRlZnM+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJiZ0ciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgIDxzdG9wIG9mZnNldD0iMCUiICBzdG9wLWNvbG9yPSIjMDcwYzBhIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwZDE1MTAiLz4KICA8L2xpbmVhckdyYWRpZW50PgogIDxsaW5lYXJHcmFkaWVudCBpZD0ibGV0RyIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgIHN0b3AtY29sb3I9IiM0YWRlODAiLz4KICAgIDxzdG9wIG9mZnNldD0iNTUlIiBzdG9wLWNvbG9yPSIjMjJjNTVlIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxNTgwM2QiLz4KICA8L2xpbmVhckdyYWRpZW50PgogIDxsaW5lYXJHcmFkaWVudCBpZD0iaGFuZEciIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgIDxzdG9wIG9mZnNldD0iMCUiICBzdG9wLWNvbG9yPSIjMjJjNTVlIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxNDUzMmQiLz4KICA8L2xpbmVhckdyYWRpZW50PgogIDxsaW5lYXJHcmFkaWVudCBpZD0iYmRyRyIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgIHN0b3AtY29sb3I9IiMyMmM1NWUiLz4KICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzE1ODAzZCIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJydWxlRyIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjAiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgICBzdG9wLWNvbG9yPSJyZ2JhKDM0LDE5Nyw5NCwwKSIvPgogICAgPHN0b3Agb2Zmc2V0PSIyMCUiICBzdG9wLWNvbG9yPSJyZ2JhKDM0LDE5Nyw5NCwwLjcpIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjgwJSIgIHN0b3AtY29sb3I9InJnYmEoMzQsMTk3LDk0LDAuNykiLz4KICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0icmdiYSgzNCwxOTcsOTQsMCkiLz4KICA8L2xpbmVhckdyYWRpZW50PgogIDxmaWx0ZXIgaWQ9ImxnbG93IiB4PSItMzAlIiB5PSItMzAlIiB3aWR0aD0iMTYwJSIgaGVpZ2h0PSIxNjAlIj4KICAgIDxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjIuNSIgcmVzdWx0PSJiIi8+CiAgICA8ZmVDb2xvck1hdHJpeCBpbj0iYiIgdHlwZT0ibWF0cml4IgogICAgICB2YWx1ZXM9IjAgMCAwIDAgMC4xMyAgMCAwIDAgMCAwLjc3ICAwIDAgMCAwIDAuMzcgIDAgMCAwIDAuNSAwIiByZXN1bHQ9ImMiLz4KICAgIDxmZU1lcmdlPjxmZU1lcmdlTm9kZSBpbj0iYyIvPjxmZU1lcmdlTm9kZSBpbj0iU291cmNlR3JhcGhpYyIvPjwvZmVNZXJnZT4KICA8L2ZpbHRlcj4KICA8ZmlsdGVyIGlkPSJoZ2xvdyIgeD0iLTUwJSIgeT0iLTUwJSIgd2lkdGg9IjIwMCUiIGhlaWdodD0iMjAwJSI+CiAgICA8ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSI2IiByZXN1bHQ9ImIiLz4KICAgIDxmZUNvbG9yTWF0cml4IGluPSJiIiB0eXBlPSJtYXRyaXgiCiAgICAgIHZhbHVlcz0iMCAwIDAgMCAwLjA4ICAwIDAgMCAwIDAuNTUgIDAgMCAwIDAgMC4yNSAgMCAwIDAgMC40NSAwIiByZXN1bHQ9ImMiLz4KICAgIDxmZU1lcmdlPjxmZU1lcmdlTm9kZSBpbj0iYyIvPjxmZU1lcmdlTm9kZSBpbj0iU291cmNlR3JhcGhpYyIvPjwvZmVNZXJnZT4KICA8L2ZpbHRlcj4KPC9kZWZzPgoKPCEtLSBCQUNLR1JPVU5EIC0tPgo8cmVjdCB3aWR0aD0iMjgwIiBoZWlnaHQ9IjMwMCIgcng9IjE2IiBmaWxsPSJ1cmwoI2JnRykiLz4KPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjI3NiIgaGVpZ2h0PSIyOTYiIHJ4PSIxNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ1cmwoI2JkckcpIiBzdHJva2Utd2lkdGg9IjEuNSIgb3BhY2l0eT0iMC41NSIvPgo8cmVjdCB4PSI3IiB5PSI3IiB3aWR0aD0iMjY2IiBoZWlnaHQ9IjI4NiIgcng9IjEwIiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMzQsMTk3LDk0LDAuMDgpIiBzdHJva2Utd2lkdGg9IjEiLz4KCjwhLS0gVlBIIExFVFRFUlMgLS0+CjxnIGZpbHRlcj0idXJsKCNsZ2xvdykiPgoKICA8IS0tIFYgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSIxOCwzNSAzMywzNSA2OCwxMTggMTAzLDM1IDExOCwzNSA3NiwxMjggNjAsMTI4IiBmaWxsPSJ1cmwoI2xldEcpIi8+CgogIDwhLS0gUDogc3RlbSArIGJvd2wsIGV2ZW5vZGQgcHVuY2hlcyB0aGUgY291bnRlciAtLT4KICA8cGF0aCBmaWxsPSJ1cmwoI2xldEcpIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9IgogICAgTSAxMzAsMzUgTCAxNDQsMzUgTCAxNDQsMTI4IEwgMTMwLDEyOCBaCiAgICBNIDE0NCwzNSBRIDE2NSwzNSAxNzgsNDYgUSAxOTQsNjAgMTk0LDY2IFEgMTk0LDkwIDE3MCw5MyBRIDE1Nyw5NSAxNDQsOTUgTCAxNDQsMzUgWgogICAgTSAxNDgsNDkgUSAxNjMsNDkgMTczLDU3IFEgMTgxLDY0IDE4MSw2OCBRIDE4MSw4MCAxNjYsODIgUSAxNTcsODMgMTQ4LDgzIFoKICAiLz4KCiAgPCEtLSBIIC0tPgogIDxyZWN0IHg9IjIwMiIgeT0iMzUiIHdpZHRoPSIxNCIgaGVpZ2h0PSI5MyIgcng9IjEiIGZpbGw9InVybCgjbGV0RykiLz4KICA8cmVjdCB4PSIyNDgiIHk9IjM1IiB3aWR0aD0iMTQiIGhlaWdodD0iOTMiIHJ4PSIxIiBmaWxsPSJ1cmwoI2xldEcpIi8+CiAgPHJlY3QgeD0iMjAyIiB5PSI3NCIgIHdpZHRoPSI2MCIgaGVpZ2h0PSIxNCIgcng9IjEiIGZpbGw9InVybCgjbGV0RykiLz4KCjwvZz4KCjwhLS0gUlVMRSAtLT4KPHJlY3QgeD0iMTgiIHk9IjE0MCIgd2lkdGg9IjI0NCIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI3J1bGVHKSIvPgoKPCEtLSBDT01QQU5ZIE5BTUUgLS0+Cjx0ZXh0IHg9IjE0MCIgeT0iMTU4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIgogIGZvbnQtZmFtaWx5PSInSUJNIFBsZXggTW9ubycsIG1vbm9zcGFjZSIKICBmb250LXNpemU9IjkuNSIgZm9udC13ZWlnaHQ9IjcwMCIgbGV0dGVyLXNwYWNpbmc9IjIiCiAgZmlsbD0iIzIyYzU1ZSIgb3BhY2l0eT0iMC45Ij5WQVVHSE4tUE9SVEVSPC90ZXh0Pgo8dGV4dCB4PSIxNDAiIHk9IjE3MiIgdGV4dC1hbmNob3I9Im1pZGRsZSIKICBmb250LWZhbWlseT0iJ0lCTSBQbGV4IE1vbm8nLCBtb25vc3BhY2UiCiAgZm9udC1zaXplPSI3LjgiIGZvbnQtd2VpZ2h0PSI1MDAiIGxldHRlci1zcGFjaW5nPSIyLjUiCiAgZmlsbD0iIzRhZGU4MCIgb3BhY2l0eT0iMC40NSI+SE9MRElOR1MgIExMQzwvdGV4dD4KCjwhLS0KICBIQU5EIFBBVEggIChsb2NhbCBzcGFjZSwgcGFsbSBhdCB5PTAsIGZpbmdlcnMgZXh0ZW5kIHRvIC15KQogIFBpbmt5IHNob3J0ZXN0ICg0NCksIFJpbmcgKDYyKSwgTWlkZGxlIHRhbGxlc3QgKDcyKSwgSW5kZXggKDU4KSwgVGh1bWIgb24gcmlnaHQgc2lkZS4KICBMZWZ0IGhhbmQ6ICB0cmFuc2xhdGUoNzgsMjY4KSByb3RhdGUoLTI4KQogIFJpZ2h0IGhhbmQ6IHRyYW5zbGF0ZSgyMDIsMjY4KSBzY2FsZSgtMSwxKSByb3RhdGUoLTI4KQotLT4KCjwhLS0gTEVGVCBIQU5EIC0tPgo8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg3OCwyNjgpIHJvdGF0ZSgtMjgpIiBmaWx0ZXI9InVybCgjaGdsb3cpIj4KPHBhdGggZmlsbD0idXJsKCNoYW5kRykiIGQ9IgogIE0gLTI3LDI0CiAgQyAtMzEsMjQgLTMzLDE3IC0zMyw5IEMgLTMzLDMgLTMwLC0zIC0yNywtNwogIEMgLTI3LC0xMSAtMjYsLTQwIC0yMywtNDUgQyAtMjEsLTUyIC0xNCwtNTIgLTEyLC00NSBDIC0xMCwtNDAgLTEwLC0xMyAtMTEsLTcKICBDIC0xMCwtMTMgLTgsLTE2IC03LC0xNiBDIC03LC0yMSAtNiwtNTggLTQsLTYzIEMgLTIsLTcwIDQsLTcwIDYsLTYzIEMgOCwtNTggOCwtMjEgNywtMTYKICBDIDcsLTIwIDksLTIxIDExLC0yMSBDIDExLC0yNSAxMSwtNjYgMTQsLTcyIEMgMTYsLTc5IDIyLC03OSAyNCwtNzIgQyAyNiwtNjYgMjYsLTI1IDI1LC0yMQogIEMgMjUsLTI0IDI3LC0yMyAyOCwtMjEgQyAyOCwtMjUgMjgsLTU0IDMxLC01OSBDIDMzLC02NSAzOCwtNjUgNDAsLTU5IEMgNDIsLTU0IDQyLC0yMyA0MSwtMTcKICBDIDQzLC05IDQ1LDQgNDIsMTQgQyA0MCwyMiAzMywyNCAyOCwyNAogIEMgMjksMjcgNDEsMzYgNDUsMjggQyA1MSwxOCA0OCw1IDQxLDMgQyAzOCwyIDM2LDQgMzUsOSBDIDM0LDE0IDM2LDIwIDMzLDI0CiAgQyAxMywyNiAtNywyNiAtMjcsMjQgWgoiLz4KPC9nPgoKPCEtLSBSSUdIVCBIQU5EIChtaXJyb3JlZCkgLS0+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDIwMiwyNjgpIHNjYWxlKC0xLDEpIHJvdGF0ZSgtMjgpIiBmaWx0ZXI9InVybCgjaGdsb3cpIj4KPHBhdGggZmlsbD0idXJsKCNoYW5kRykiIGQ9IgogIE0gLTI3LDI0CiAgQyAtMzEsMjQgLTMzLDE3IC0zMyw5IEMgLTMzLDMgLTMwLC0zIC0yNywtNwogIEMgLTI3LC0xMSAtMjYsLTQwIC0yMywtNDUgQyAtMjEsLTUyIC0xNCwtNTIgLTEyLC00NSBDIC0xMCwtNDAgLTEwLC0xMyAtMTEsLTcKICBDIC0xMCwtMTMgLTgsLTE2IC03LC0xNiBDIC03LC0yMSAtNiwtNTggLTQsLTYzIEMgLTIsLTcwIDQsLTcwIDYsLTYzIEMgOCwtNTggOCwtMjEgNywtMTYKICBDIDcsLTIwIDksLTIxIDExLC0yMSBDIDExLC0yNSAxMSwtNjYgMTQsLTcyIEMgMTYsLTc5IDIyLC03OSAyNCwtNzIgQyAyNiwtNjYgMjYsLTI1IDI1LC0yMQogIEMgMjUsLTI0IDI3LC0yMyAyOCwtMjEgQyAyOCwtMjUgMjgsLTU0IDMxLC01OSBDIDMzLC02NSAzOCwtNjUgNDAsLTU5IEMgNDIsLTU0IDQyLC0yMyA0MSwtMTcKICBDIDQzLC05IDQ1LDQgNDIsMTQgQyA0MCwyMiAzMywyNCAyOCwyNAogIEMgMjksMjcgNDEsMzYgNDUsMjggQyA1MSwxOCA0OCw1IDQxLDMgQyAzOCwyIDM2LDQgMzUsOSBDIDM0LDE0IDM2LDIwIDMzLDI0CiAgQyAxMywyNiAtNywyNiAtMjcsMjQgWgoiLz4KPC9nPgoKPCEtLSBDb3JuZXIgYWNjZW50cyAtLT4KPGNpcmNsZSBjeD0iMTYiICBjeT0iMTYiICByPSIyIiBmaWxsPSIjMjJjNTVlIiBvcGFjaXR5PSIwLjMiLz4KPGNpcmNsZSBjeD0iMjY0IiBjeT0iMTYiICByPSIyIiBmaWxsPSIjMjJjNTVlIiBvcGFjaXR5PSIwLjMiLz4KPGNpcmNsZSBjeD0iMTYiICBjeT0iMjg0IiByPSIyIiBmaWxsPSIjMjJjNTVlIiBvcGFjaXR5PSIwLjMiLz4KPGNpcmNsZSBjeD0iMjY0IiBjeT0iMjg0IiByPSIyIiBmaWxsPSIjMjJjNTVlIiBvcGFjaXR5PSIwLjMiLz4KCjwvc3ZnPgo=" style="width:64px;height:64px;margin-bottom:8px" alt="VPH logo">
-        <div class="badge badge-green pulse" style="margin-bottom:10px">EPA/OSHA Aligned · 5 CEUs</div>
+        <div class="badge badge-green pulse" style="margin-bottom:10px">EPA/OSHA Aligned · 2-Day Course · 10 CEUs</div>
         <h2 style="font-size:clamp(1.4rem,3vw,1.8rem);color:var(--t100);margin-bottom:4px">Advanced Mold Assessment</h2>
-        <p style="font-size:12px;color:var(--t500);font-family:var(--mono)">&amp; Green Remediation Workshop</p>
+        <p style="font-size:12px;color:var(--t500);font-family:var(--mono)">&amp; Green Remediation 2-Day Workshop</p>
         <p style="font-family:var(--mono);font-size:10px;color:var(--g600);letter-spacing:0.12em;text-transform:uppercase;margin-top:4px">Vaughn-Porter Holdings LLC</p>
       </div>
 
@@ -494,7 +495,7 @@ body.light-mode .toast{background:#fff;color:#16a34a}
 <div class="screen" id="screen-welcome">
   <div class="dashboard-hero">
     <div class="container" style="position:relative;z-index:1">
-      <div class="badge badge-green pulse fade-in d1" style="margin-bottom:20px">● Live Course &nbsp;|&nbsp; EPA/OSHA Aligned &nbsp;|&nbsp; 5 CEUs</div>
+      <div class="badge badge-green pulse fade-in d1" style="margin-bottom:20px">● Live 2-Day Course &nbsp;|&nbsp; EPA/OSHA Aligned &nbsp;|&nbsp; 10 CEUs</div>
       <h1 style="font-size:clamp(2rem,6vw,4rem);color:var(--t100);line-height:0.95;margin-bottom:16px" class="fade-in d2">Advanced Mold Assessment<br><span style="color:var(--g400)">&amp; Green Remediation</span></h1>
       <p style="font-size:13px;color:var(--t400);max-width:520px;line-height:1.7;margin-bottom:24px" class="fade-in d3" id="welcome-greeting">Welcome back! Continue from where you left off or explore any module below.</p>
       <!-- Course progress bar -->
@@ -559,7 +560,7 @@ body.light-mode .toast{background:#fff;color:#16a34a}
       <button class="btn btn-ghost" onclick="goToExam()">Take Exam →</button>
     </div>
     <div style="margin-top:32px;padding-top:16px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-      <div style="font-family:var(--mono);font-size:10px;color:var(--t600)">© Vaughn-Porter Holdings LLC · Kaylon Vaughn · Advanced Mold Assessment &amp; Green Remediation Workshop</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--t600)">© Vaughn-Porter Holdings LLC · Kaylon Vaughn · Advanced Mold Assessment &amp; Green Remediation 2-Day Workshop</div>
       <button onclick="promptInstructor()" style="background:none;border:none;cursor:pointer;font-family:var(--mono);font-size:10px;color:var(--t600);padding:4px 8px;border-radius:2px;transition:color 0.2s" onmouseover="this.style.color='var(--t400)'" onmouseout="this.style.color='var(--t600)'">Instructor Access →</button>
     </div>
   </div>
@@ -673,7 +674,9 @@ body.light-mode .toast{background:#fff;color:#16a34a}
 // SETUP: In Instructor Dashboard → Settings → paste Firebase URL
 // Firebase rules must be: { ".read": true, ".write": true }
 // ═══════════════════════════════════════════════════════════════════
-window._fbUrl = localStorage.getItem('mold_firebase_url') || null;
+const SITE_FIREBASE_URL = ''; // Optional: set your Firebase Realtime Database URL here for all devices.
+function normalizeFirebaseUrl(url){return (url||'').trim().replace(/\/+$/,'');}
+window._fbUrl = normalizeFirebaseUrl(localStorage.getItem('mold_firebase_url') || SITE_FIREBASE_URL) || null;
 
 window.storage = {
   _pre(shared){ return shared ? 'mold_sh:' : 'mold_ps:'; },
@@ -759,14 +762,14 @@ window.storage = {
 const INSTRUCTOR_EMAIL = 'kaylon.vaughn@fhcsoi.org';
 
 const DOWNLOADS=[
-  {icon:'📋',name:'Mold Remediation SOW Template',type:'PDF',desc:'Scope of Work template covering Levels 1–4 with client signature block',url:'./files/mold-remediation-sow-template.pdf'},
-  {icon:'🗺',name:'Moisture Mapping Field Sheet',type:'PDF',desc:'Color-coded floor plan log with MC% threshold guide',url:'./files/moisture-mapping-field-sheet.pdf'},
-  {icon:'🛡',name:'OSHA 1910.134 RPP Template',type:'PDF',desc:'Written Respiratory Protection Program template for small businesses',url:'./files/osha-1910-134-rpp-template.pdf'},
-  {icon:'📝',name:'Pre-Remediation Checklist',type:'PDF',desc:'Lead/asbestos triggers, PPE selection, containment setup verification',url:'./files/pre-remediation-checklist.pdf'},
-  {icon:'🏆',name:'Clearance Protocol Checklist',type:'PDF',desc:'Visual inspection + air sampling clearance documentation sheet',url:'./files/clearance-protocol-checklist.pdf'},
-  {icon:'📊',name:'Biocide FIFRA Quick Reference',type:'PDF',desc:'Label-law compliance checklist for antimicrobial applications',url:'./files/biocide-fifra-quick-reference.pdf'},
-  {icon:'⚠️',name:'PPE Selection Guide',type:'PDF',desc:'N-95 vs. HEPA APF decision matrix by remediation level',url:'./files/ppe-selection-guide.pdf'},
-  {icon:'🔍',name:'Hidden Mold Indicator Reference',type:'PDF',desc:'Visual indicators, instrument readings, and investigation decision tree',url:'./files/hidden-mold-indicator-reference.pdf'},
+  {icon:'📋',name:'Mold Remediation SOW Template',type:'PDF',desc:'Scope of Work template covering Levels 1–4 with client signature block',url:'./Files/mold-remediation-sow-template.pdf'},
+  {icon:'🗺',name:'Moisture Mapping Field Sheet',type:'PDF',desc:'Color-coded floor plan log with MC% threshold guide',url:'./Files/moisture-mapping-field-sheet.pdf'},
+  {icon:'🛡',name:'OSHA 1910.134 RPP Template',type:'PDF',desc:'Written Respiratory Protection Program template for small businesses',url:'./Files/osha-1910-134-rpp-template.pdf'},
+  {icon:'📝',name:'Pre-Remediation Checklist',type:'PDF',desc:'Lead/asbestos triggers, PPE selection, containment setup verification',url:'./Files/pre-remediation-checklist.pdf'},
+  {icon:'🏆',name:'Clearance Protocol Checklist',type:'PDF',desc:'Visual inspection + air sampling clearance documentation sheet',url:'./Files/clearance-protocol-checklist.pdf'},
+  {icon:'📊',name:'Biocide FIFRA Quick Reference',type:'PDF',desc:'Label-law compliance checklist for antimicrobial applications',url:'./Files/biocide-fifra-quick-reference.pdf'},
+  {icon:'⚠️',name:'PPE Selection Guide',type:'PDF',desc:'N-95 vs. HEPA APF decision matrix by remediation level',url:'./Files/ppe-selection-guide.pdf'},
+  {icon:'🔍',name:'Hidden Mold Indicator Reference',type:'PDF',desc:'Visual indicators, instrument readings, and investigation decision tree',url:'./Files/hidden-mold-indicator-reference.pdf'},
 ];
 
 // ═══════════════════════════════════════════════════════════════════
@@ -774,10 +777,10 @@ const DOWNLOADS=[
 // ═══════════════════════════════════════════════════════════════════
 const LESSONS=[
 {module:0,modTitle:"Green Remediation Protocols",modColor:"var(--g500)",modIcon:"🌿",title:"The Removal-First Doctrine",duration:"25 min",content:`<div class="lesson-header"><div class="mod-tag">Module 01 · Lesson 1 of 4</div><h1>The Removal-First Doctrine</h1><div class="lesson-meta"><span class="badge badge-green">25 min</span><span class="badge badge-gray">Foundation</span></div></div><div class="lesson-body"><p>The central premise of professional mold remediation is deceptively simple: <strong>mold must be physically removed, not killed in place.</strong> This is not a preference — it is a scientifically grounded, regulatory-aligned, and legally defensible doctrine.</p><h3>Why "Killing" Mold Is Not Enough</h3><p>Mold allergenicity is not a function of whether cells are alive or dead. The biological structures that trigger immune responses — primarily beta-glucans, cell wall proteins, and mycotoxins — are structurally stable molecules not rendered harmless by biocides at typical application concentrations.</p><p>A surface treated with a registered antimicrobial may show no viable mold growth on culture-based testing. However, ERMI testing and immunoassay testing will still detect elevated mold DNA fragments and allergenic proteins. Only physical removal eliminates the hazard.</p><div class="insight"><div class="insight-label">⚡ Instructor Insight</div><p>"When you vacuum a surface and wipe it clean, you remove the problem. When you spray something on it, you change the problem's biology without removing its structure." Dead mold is still mold.</p></div><h3>The Three Pillars of Physical Removal</h3><div class="key-box"><ul><li><strong>HEPA Vacuuming</strong> — Captures and physically removes spores, hyphal fragments, and fine particulate. True HEPA filters ≥99.97% of particles at 0.3 microns. Always performed first, before any wet methods.</li><li><strong>Damp Wiping</strong> — Microfiber cloth with water or low-VOC surfactant removes surface residue from non-porous materials after HEPA vacuuming. One direction only. Dispose after each pass.</li><li><strong>"Cut &amp; Toss"</strong> — For porous and semi-porous materials with visible colonization: material is cut out, double-bagged in 6-mil poly, and disposed.</li></ul></div><h3>What Biocides Can and Cannot Do</h3><div class="table-scroll"><table class="data-table"><thead><tr><th>Property</th><th>Biocide Application</th><th>Physical Removal</th></tr></thead><tbody><tr><td>Stops live growth</td><td class="good">✓ Yes</td><td class="good">✓ Yes</td></tr><tr><td>Removes structural allergens</td><td class="bad">✗ No</td><td class="good">✓ Yes</td></tr><tr><td>Removes mycotoxins</td><td class="bad">✗ No</td><td class="good">✓ Yes</td></tr><tr><td>Verifiable by clearance testing</td><td class="bad">✗ Limited</td><td class="good">✓ Yes</td></tr><tr><td>Works on porous materials</td><td class="bad">✗ No</td><td class="good">✓ Via "Cut &amp; Toss"</td></tr></tbody></table></div><h3>Regulatory Foundation</h3><p>The removal-first doctrine is supported by EPA's "Mold Remediation in Schools and Commercial Buildings" guidance, IICRC S520, and the NYC DOH mold remediation guidelines — all of which state that physical removal is the primary and preferred method.</p><div class="warn-box"><div class="warn-label">🚨 Critical Point</div><p>If a client asks "can't you just spray something?" — biocide application without physical removal fails to remove allergens, is often an off-label pesticide application under EPA FIFRA, provides no defensible clearance documentation, and will likely result in recurrence when moisture is not addressed.</p></div></div>`},
-{module:0,modTitle:"Green Remediation Protocols",modColor:"var(--g500)",modIcon:"🌿",title:"HEPA Vacuuming: Equipment & Procedures",duration:"22 min",content:`<div class="lesson-header"><div class="mod-tag">Module 01 · Lesson 2 of 4</div><h1>HEPA Vacuuming: Equipment &amp; Procedures</h1><div class="lesson-meta"><span class="badge badge-green">22 min</span><span class="badge badge-gray">Technique</span></div></div><div class="lesson-body"><p>HEPA vacuuming is the foundational first step in every physical removal sequence. Performed correctly, it captures the bulk of the spore load. Performed incorrectly, it spreads contamination.</p><h3>True HEPA vs. "HEPA-Type"</h3><p>Only vacuums with <strong>certified True HEPA filters</strong> meeting IEST RP-CC001 standards — filtering ≥99.97% of particles ≥0.3 microns — are acceptable for remediation work. "HEPA-type" or "HEPA-style" labels do not guarantee this performance. Additionally, the vacuum must have a <strong>sealed housing</strong>.</p><div class="diagram"><div class="diagram-title">[Diagram: HEPA Vacuum Components]</div><div class="diagram-desc">Cross-section: intake nozzle → pre-filter → True HEPA filter → sealed motor housing → exhaust port. Red arrows show failure points in "HEPA-type" units with housing gaps.</div></div><h3>Setup Procedure Before Vacuuming</h3><ol><li>Inspect filter integrity — no tears, compression damage, or moisture exposure</li><li>Verify all housing gaskets are seated and sealed</li><li>Attach the correct nozzle for the surface type</li><li>Confirm containment is established and negative air machine is running</li><li>Don appropriate PPE: N-95, gloves, disposable coverall</li></ol><h3>Vacuuming Sequence: Always Top-Down</h3><ol><li>Ceiling surfaces and overhead ledges</li><li>Upper wall surfaces</li><li>Lower wall surfaces and baseboards</li><li>Furniture and horizontal surfaces</li><li>Floor — last</li></ol><div class="insight"><div class="insight-label">⚡ Instructor Insight</div><p>Invisible spores are the primary health hazard. Visible mold is the surface manifestation of a much larger spore reservoir distributed throughout the air and settled on surfaces. Systematic, slow, methodical vacuuming of all surfaces is what produces verifiable clearance results.</p></div><h3>Filter Replacement &amp; Maintenance</h3><div class="table-scroll"><table class="data-table"><thead><tr><th>Condition</th><th>Action Required</th></tr></thead><tbody><tr><td>Reduced suction</td><td>Check pre-filter first; replace if needed</td></tr><tr><td>Visible debris on HEPA filter face</td><td>Replace — do not tap or blow clean</td></tr><tr><td>HEPA filter exposed to moisture</td><td>Dispose immediately — permanently compromised</td></tr><tr><td>After each full-day job</td><td>Inspect; replace if airflow restriction is measurable</td></tr></tbody></table></div></div>`},
+{module:0,modTitle:"Green Remediation Protocols",modColor:"var(--g500)",modIcon:"🌿",title:"HEPA Vacuuming: Equipment & Procedures",duration:"22 min",content:`<div class="lesson-header"><div class="mod-tag">Module 01 · Lesson 2 of 4</div><h1>HEPA Vacuuming: Equipment &amp; Procedures</h1><div class="lesson-meta"><span class="badge badge-green">22 min</span><span class="badge badge-gray">Technique</span></div></div><div class="lesson-body"><p>HEPA vacuuming is the foundational first step in every physical removal sequence. Performed correctly, it captures the bulk of the spore load. Performed incorrectly, it spreads contamination.</p><h3>True HEPA vs. "HEPA-Type"</h3><p>Only vacuums with <strong>certified True HEPA filters</strong> meeting IEST RP-CC001 standards — filtering ≥99.97% of particles ≥0.3 microns — are acceptable for remediation work. "HEPA-type" or "HEPA-style" labels do not guarantee this performance. Additionally, the vacuum must have a <strong>sealed housing</strong>.</p><div class="diagram"><img src="./Files/diagram-hepa-vacuum-components.png" alt="Diagram showing HEPA vacuum components, sealed airflow path, filter, motor housing, exhaust port, and failure points in HEPA-type units"></div><h3>Setup Procedure Before Vacuuming</h3><ol><li>Inspect filter integrity — no tears, compression damage, or moisture exposure</li><li>Verify all housing gaskets are seated and sealed</li><li>Attach the correct nozzle for the surface type</li><li>Confirm containment is established and negative air machine is running</li><li>Don appropriate PPE: N-95, gloves, disposable coverall</li></ol><h3>Vacuuming Sequence: Always Top-Down</h3><ol><li>Ceiling surfaces and overhead ledges</li><li>Upper wall surfaces</li><li>Lower wall surfaces and baseboards</li><li>Furniture and horizontal surfaces</li><li>Floor — last</li></ol><div class="insight"><div class="insight-label">⚡ Instructor Insight</div><p>Invisible spores are the primary health hazard. Visible mold is the surface manifestation of a much larger spore reservoir distributed throughout the air and settled on surfaces. Systematic, slow, methodical vacuuming of all surfaces is what produces verifiable clearance results.</p></div><h3>Filter Replacement &amp; Maintenance</h3><div class="table-scroll"><table class="data-table"><thead><tr><th>Condition</th><th>Action Required</th></tr></thead><tbody><tr><td>Reduced suction</td><td>Check pre-filter first; replace if needed</td></tr><tr><td>Visible debris on HEPA filter face</td><td>Replace — do not tap or blow clean</td></tr><tr><td>HEPA filter exposed to moisture</td><td>Dispose immediately — permanently compromised</td></tr><tr><td>After each full-day job</td><td>Inspect; replace if airflow restriction is measurable</td></tr></tbody></table></div></div>`},
 {module:0,modTitle:"Green Remediation Protocols",modColor:"var(--g500)",modIcon:"🌿",title:"Damp Wiping & The 'Cut & Toss' Rule",duration:"20 min",content:`<div class="lesson-header"><div class="mod-tag">Module 01 · Lesson 3 of 4</div><h1>Damp Wiping &amp; The "Cut &amp; Toss" Rule</h1><div class="lesson-meta"><span class="badge badge-green">20 min</span><span class="badge badge-gray">Technique</span></div></div><div class="lesson-body"><p>After HEPA vacuuming, damp wiping completes physical removal on <strong>non-porous hard surfaces</strong>. For <strong>porous materials</strong>, the answer is never a wipe — it is "cut and toss."</p><h3>Damp Wiping: The Correct Protocol</h3><div class="table-scroll"><table class="data-table"><thead><tr><th>Element</th><th>Correct Practice</th><th>Common Error</th></tr></thead><tbody><tr><td>Cloth</td><td>Microfiber (high fiber density)</td><td>Cotton rags — low surface area</td></tr><tr><td>Solution</td><td>Plain water or 2% dish soap</td><td>Biocide solutions — off-label use</td></tr><tr><td>Direction</td><td>One-direction passes only</td><td>Back-and-forth scrubbing</td></tr><tr><td>Cloth reuse</td><td>Dispose after each pass</td><td>Re-dipping used cloth</td></tr><tr><td>Sequence</td><td>Ceiling → walls → floor</td><td>Starting at floor level</td></tr></tbody></table></div><div class="insight"><div class="insight-label">⚡ Instructor Insight</div><p>Change your rinse solution every 15–20 minutes of continuous wiping, or whenever the water appears discolored. You are not "cleaning" with a contaminated solution — you are redepositing material.</p></div><h3>The "Cut &amp; Toss" Rule — No Exceptions for Porous Materials</h3><div class="key-box"><ul><li><strong>Drywall/Gypsum Board</strong> — Any visible mold on face paper: cut and remove. Cut to nearest stud/structural member.</li><li><strong>Insulation</strong> — Fiberglass batts, cellulose, spray foam with visible mold: remove entirely.</li><li><strong>Ceiling Tiles</strong> — Acoustic mineral fiber tiles: any visible mold means remove and replace.</li><li><strong>Carpet and Padding</strong> — Mold-contaminated carpet: full removal including padding.</li><li><strong>Structural Wood</strong> — Surface mold on framing: HEPA vac + damp wipe + wire brush; replace if structurally compromised.</li></ul></div><div class="warn-box"><div class="warn-label">🚨 Stop Work Condition</div><p>If cutting reveals significantly more mold growth than was visible on the surface — stop work, document with photographs, update the client in writing, and revise the SOW before continuing.</p></div></div>`},
-{module:0,modTitle:"Green Remediation Protocols",modColor:"var(--g500)",modIcon:"🌿",title:"Negative Air Machines: Exhaust to Outdoors",duration:"25 min",content:`<div class="lesson-header"><div class="mod-tag">Module 01 · Lesson 4 of 4</div><h1>Negative Air Machines: Exhaust to Outdoors</h1><div class="lesson-meta"><span class="badge badge-green">25 min</span><span class="badge badge-red">Critical Safety</span></div></div><div class="lesson-body"><p>A negative air machine (NAM) used correctly is the engineering control that makes physical remediation work. Used incorrectly — particularly when exhausted to an interior space — it transforms a contained contamination zone into a whole-building contamination event.</p><h3>Why Exhaust-to-Outdoors Is Non-Negotiable</h3><p>HEPA filtration captures particles at ≥99.97% efficiency — meaning 0.03% pass through. At spore concentrations inside an active remediation zone, even 0.03% represents thousands of particles per cubic foot of exhaust air. <strong>Exhausting to any interior space introduces spore-laden air into the occupied building.</strong></p><div class="diagram"><div class="diagram-title">[Diagram: Correct vs. Incorrect NAM Configuration]</div><div class="diagram-desc">LEFT (correct): NAM inside containment; 6" flex duct exits through sealed window gap to exterior; pressure gauge shows -0.03" w.c. RIGHT (incorrect): duct connected to HVAC return grille — red X, arrows showing contaminated air distributed to all zones.</div></div><h3>Setting Up Negative Air: Step-by-Step</h3><ol><li>Establish full containment first — 6-mil poly, floor to ceiling, all seams taped</li><li>Position the NAM inside the contamination zone</li><li>Route exhaust duct to the exterior through a sealed window insert</li><li>Seal all gaps around the exhaust duct at the building penetration</li><li>Verify negative pressure with a manometer — target: -0.02 to -0.05 inches water column</li><li>Calculate air changes per hour — minimum 4 ACH for standard remediation</li></ol><h3>ACH Calculation</h3><div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin:12px 0;font-family:var(--mono);font-size:13px;color:var(--g300)">CFM Required = (Room Volume in cu. ft. × Target ACH) ÷ 60<br><br>Example: 12ft × 10ft × 9ft room = 1,080 cu. ft.<br>1,080 × 4 ACH ÷ 60 = <strong>72 CFM minimum</strong></div><div class="warn-box"><div class="warn-label">🚨 Never Connect to HVAC</div><p>Under no circumstances should a negative air machine exhaust be connected to the building's HVAC system, return air plenum, or ductwork. HVAC-distributed contamination affects every room served by that system and requires full duct cleaning and HVAC decontamination.</p></div></div>`},
-{module:1,modTitle:"Investigative Assessment & Reporting",modColor:"var(--a500)",modIcon:"🔍",title:"The Mold Triangle: Breaking the Growth Cycle",duration:"20 min",content:`<div class="lesson-header"><div class="mod-tag">Module 02 · Lesson 1 of 4</div><h1>The Mold Triangle: Breaking the Growth Cycle</h1><div class="lesson-meta"><span class="badge badge-amber">20 min</span><span class="badge badge-gray">Concept</span></div></div><div class="lesson-body"><p>Every mold problem is a triangle problem. Mold growth requires the simultaneous presence of three factors. Remove any one leg of the triangle, and active growth stops.</p><div class="diagram"><div class="diagram-title">[Diagram: The Mold Triangle]</div><div class="diagram-desc">Equilateral triangle. Vertex 1: MOISTURE SOURCE. Vertex 2: ORGANIC NUTRIENT (cellulose, dust). Vertex 3: TEMPERATURE (40°F–100°F). Center: MOLD GROWTH. Each vertex has a removal strategy callout.</div></div><h3>Leg 1: Moisture — The Critical Variable</h3><p>Temperature and organic nutrients are almost always present in buildings. Moisture is the controllable, variable factor. Moisture identification and source correction <strong>must precede any remediation work.</strong></p><div class="table-scroll"><table class="data-table"><thead><tr><th>Measurement</th><th>Value</th><th>Implication</th></tr></thead><tbody><tr><td>Wood MC%</td><td>&gt;19% sustained</td><td>Mold growth initiation threshold</td></tr><tr><td>Drywall MC%</td><td>&gt;17% sustained</td><td>Immediate drying or removal required</td></tr><tr><td>Relative humidity</td><td>&gt;60% sustained</td><td>Active growth condition</td></tr><tr><td>RH for Stachybotrys</td><td>&gt;90%</td><td>Chronic wet condition</td></tr></tbody></table></div><h3>Leg 2: Organic Nutrients — Substrate Matters</h3><div class="key-box"><ul><li><strong>High risk:</strong> Paper-faced drywall, ceiling tiles, insulation facings, wood, cardboard</li><li><strong>Moderate risk:</strong> OSB, plywood, MDF</li><li><strong>Low risk:</strong> Metal, glass, ceramic tile, concrete</li><li><strong>Common trap:</strong> "Mold-resistant" drywall resists mold on the facing, but organic dust on the surface can still support growth</li></ul></div><div class="insight"><div class="insight-label">⚡ Instructor Insight</div><p>Require written confirmation of moisture source correction before beginning remediation. A job that remediates visible mold while the moisture source remains active will show recurrence within 30–90 days.</p></div><h3>Species and the Triangle</h3><ul><li><strong>Cladosporium</strong> — Lower water activity; common, usually lower concern</li><li><strong>Aspergillus/Penicillium</strong> — Moderate water activity; certain species produce mycotoxins</li><li><strong>Stachybotrys chartarum</strong> — High water activity; requires chronic wetness</li><li><strong>Chaetomium</strong> — High water activity; cellulose degrader; indicator of serious moisture intrusion</li></ul></div>`},
+{module:0,modTitle:"Green Remediation Protocols",modColor:"var(--g500)",modIcon:"🌿",title:"Negative Air Machines: Exhaust to Outdoors",duration:"25 min",content:`<div class="lesson-header"><div class="mod-tag">Module 01 · Lesson 4 of 4</div><h1>Negative Air Machines: Exhaust to Outdoors</h1><div class="lesson-meta"><span class="badge badge-green">25 min</span><span class="badge badge-red">Critical Safety</span></div></div><div class="lesson-body"><p>A negative air machine (NAM) used correctly is the engineering control that makes physical remediation work. Used incorrectly — particularly when exhausted to an interior space — it transforms a contained contamination zone into a whole-building contamination event.</p><h3>Why Exhaust-to-Outdoors Is Non-Negotiable</h3><p>HEPA filtration captures particles at ≥99.97% efficiency — meaning 0.03% pass through. At spore concentrations inside an active remediation zone, even 0.03% represents thousands of particles per cubic foot of exhaust air. <strong>Exhausting to any interior space introduces spore-laden air into the occupied building.</strong></p><div class="diagram"><img src="./Files/diagram-nam-exhaust.png" alt="Diagram comparing correct exterior exhaust for a negative air machine against incorrect HVAC return grille exhaust"></div><h3>Setting Up Negative Air: Step-by-Step</h3><ol><li>Establish full containment first — 6-mil poly, floor to ceiling, all seams taped</li><li>Position the NAM inside the contamination zone</li><li>Route exhaust duct to the exterior through a sealed window insert</li><li>Seal all gaps around the exhaust duct at the building penetration</li><li>Verify negative pressure with a manometer — target: -0.02 to -0.05 inches water column</li><li>Calculate air changes per hour — minimum 4 ACH for standard remediation</li></ol><h3>ACH Calculation</h3><div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin:12px 0;font-family:var(--mono);font-size:13px;color:var(--g300)">CFM Required = (Room Volume in cu. ft. × Target ACH) ÷ 60<br><br>Example: 12ft × 10ft × 9ft room = 1,080 cu. ft.<br>1,080 × 4 ACH ÷ 60 = <strong>72 CFM minimum</strong></div><div class="warn-box"><div class="warn-label">🚨 Never Connect to HVAC</div><p>Under no circumstances should a negative air machine exhaust be connected to the building's HVAC system, return air plenum, or ductwork. HVAC-distributed contamination affects every room served by that system and requires full duct cleaning and HVAC decontamination.</p></div></div>`},
+{module:1,modTitle:"Investigative Assessment & Reporting",modColor:"var(--a500)",modIcon:"🔍",title:"The Mold Triangle: Breaking the Growth Cycle",duration:"20 min",content:`<div class="lesson-header"><div class="mod-tag">Module 02 · Lesson 1 of 4</div><h1>The Mold Triangle: Breaking the Growth Cycle</h1><div class="lesson-meta"><span class="badge badge-amber">20 min</span><span class="badge badge-gray">Concept</span></div></div><div class="lesson-body"><p>Every mold problem is a triangle problem. Mold growth requires the simultaneous presence of three factors. Remove any one leg of the triangle, and active growth stops.</p><div class="diagram"><img src="./Files/diagram-mold-triangle.png" alt="Diagram of the mold triangle showing moisture source, organic nutrient, temperature, and mold growth control strategies"></div><h3>Leg 1: Moisture — The Critical Variable</h3><p>Temperature and organic nutrients are almost always present in buildings. Moisture is the controllable, variable factor. Moisture identification and source correction <strong>must precede any remediation work.</strong></p><div class="table-scroll"><table class="data-table"><thead><tr><th>Measurement</th><th>Value</th><th>Implication</th></tr></thead><tbody><tr><td>Wood MC%</td><td>&gt;19% sustained</td><td>Mold growth initiation threshold</td></tr><tr><td>Drywall MC%</td><td>&gt;17% sustained</td><td>Immediate drying or removal required</td></tr><tr><td>Relative humidity</td><td>&gt;60% sustained</td><td>Active growth condition</td></tr><tr><td>RH for Stachybotrys</td><td>&gt;90%</td><td>Chronic wet condition</td></tr></tbody></table></div><h3>Leg 2: Organic Nutrients — Substrate Matters</h3><div class="key-box"><ul><li><strong>High risk:</strong> Paper-faced drywall, ceiling tiles, insulation facings, wood, cardboard</li><li><strong>Moderate risk:</strong> OSB, plywood, MDF</li><li><strong>Low risk:</strong> Metal, glass, ceramic tile, concrete</li><li><strong>Common trap:</strong> "Mold-resistant" drywall resists mold on the facing, but organic dust on the surface can still support growth</li></ul></div><div class="insight"><div class="insight-label">⚡ Instructor Insight</div><p>Require written confirmation of moisture source correction before beginning remediation. A job that remediates visible mold while the moisture source remains active will show recurrence within 30–90 days.</p></div><h3>Species and the Triangle</h3><ul><li><strong>Cladosporium</strong> — Lower water activity; common, usually lower concern</li><li><strong>Aspergillus/Penicillium</strong> — Moderate water activity; certain species produce mycotoxins</li><li><strong>Stachybotrys chartarum</strong> — High water activity; requires chronic wetness</li><li><strong>Chaetomium</strong> — High water activity; cellulose degrader; indicator of serious moisture intrusion</li></ul></div>`},
 {module:1,modTitle:"Investigative Assessment & Reporting",modColor:"var(--a500)",modIcon:"🔍",title:"Moisture Mapping: Instruments & Methodology",duration:"28 min",content:`<div class="lesson-header"><div class="mod-tag">Module 02 · Lesson 2 of 4</div><h1>Moisture Mapping: Instruments &amp; Methodology</h1><div class="lesson-meta"><span class="badge badge-amber">28 min</span><span class="badge badge-gray">Technique</span></div></div><div class="lesson-body"><p>Moisture mapping is the systematic measurement and documentation of moisture levels across all relevant building surfaces. Opinions about mold without supporting moisture data are guesswork.</p><h3>Core Instruments</h3><div class="table-scroll"><table class="data-table"><thead><tr><th>Instrument</th><th>Measures</th><th>Best Use</th><th>Limitation</th></tr></thead><tbody><tr><td>Pin Moisture Meter</td><td>MC% via resistance</td><td>Verification readings</td><td>Misses sub-surface moisture</td></tr><tr><td>Pinless (Capacitance) Meter</td><td>Relative moisture</td><td>Rapid scanning</td><td>Relative reading only</td></tr><tr><td>Thermo-Hygrometer</td><td>Temp + RH</td><td>Ambient conditions</td><td>Point-in-time only</td></tr><tr><td>Infrared Camera (IR)</td><td>Surface temperature</td><td>Hidden moisture indicators</td><td>Not a moisture meter — needs verification</td></tr></tbody></table></div><div class="insight"><div class="insight-label">⚡ Instructor Insight</div><p>An IR camera does not detect moisture — it detects temperature differentials. Wet surfaces cool via evaporation, producing the thermal signature. This only works when there is a minimum 10°F differential between inside and outside. Verify every thermal anomaly with a moisture meter.</p></div><h3>The Two-Step Scan Protocol</h3><ol><li><strong>Pinless scan — rapid coverage:</strong> Scan every wall surface, ceiling, and floor. Mark any reading above 15% relative with painter's tape.</li><li><strong>Pin verification — confirm and quantify:</strong> At every flagged location, obtain the actual MC% reading and log on the floor plan: location code, MC%, depth, instrument, date/time.</li></ol><div class="key-box"><ul><li>Sketch all rooms with approximate dimensions</li><li>Number or letter each measurement point</li><li>Use color coding: Green (≤16%), Yellow (17–19%), Orange (20–25%), Red (&gt;25%)</li><li>Cross-reference to photo log</li><li>Note moisture source hypothesis at each elevated reading</li></ul></div><div class="warn-box"><div class="warn-label">🚨 The "Dry Surface" Trap</div><p>A visually dry and clean surface can register elevated moisture content. Even surfaces that look and feel completely dry must be measured with a pinless meter as part of the systematic scan.</p></div></div>`},
 {module:1,modTitle:"Investigative Assessment & Reporting",modColor:"var(--a500)",modIcon:"🔍",title:"Investigating Hidden Mold Without Guesswork",duration:"22 min",content:`<div class="lesson-header"><div class="mod-tag">Module 02 · Lesson 3 of 4</div><h1>Investigating Hidden Mold Without Guesswork</h1><div class="lesson-meta"><span class="badge badge-amber">22 min</span><span class="badge badge-gray">Diagnostics</span></div></div><div class="lesson-body"><p>The defining challenge in mold assessment is that the most serious contamination is often the least visible. A systematic approach separates assessors who find problems from those who miss them.</p><h3>Hidden Mold Indicators — Read the Building</h3><div class="table-scroll"><table class="data-table"><thead><tr><th>Indicator</th><th>Location</th><th>What It Suggests</th></tr></thead><tbody><tr><td>Efflorescence (white salt deposit)</td><td>Masonry, below-grade walls</td><td>Groundwater migration; chronic moisture</td></tr><tr><td>Paint bubbling/peeling from wall</td><td>Exterior walls, bathrooms</td><td>Moisture migrating from exterior</td></tr><tr><td>Buckled/cupped hardwood flooring</td><td>Floors</td><td>Sub-floor moisture; plumbing leak below</td></tr><tr><td>Musty odor in specific zone</td><td>Any room</td><td>Active or recent mold growth nearby</td></tr><tr><td>Rust staining on HVAC registers</td><td>Registers</td><td>Condensation in ducts; high humidity</td></tr></tbody></table></div><h3>Non-Destructive Investigation Sequence</h3><ol><li><strong>Olfactory scan:</strong> Musty odor concentration directs investigation</li><li><strong>Visual macro-scan:</strong> All surfaces for staining, discoloration, physical deformation</li><li><strong>Pinless moisture scan:</strong> All suspect walls and floors</li><li><strong>IR thermography:</strong> During temperature differential conditions</li><li><strong>Air sampling at suspect zones:</strong> Closed-room air sampling with windows closed for 12+ hours prior</li></ol><div class="insight"><div class="insight-label">⚡ Instructor Insight</div><p>The "mushroom test" for wall cavities: activate the HVAC blower briefly with windows closed. Increased air movement can bring cavity air into the room air stream, temporarily spiking detectable spore concentrations. This helps direct where to take targeted air samples.</p></div><h3>HVAC as a Contamination Vector</h3><div class="key-box"><ul><li>Air handler drain pan — standing water is growth medium</li><li>Evaporator coils — mold on coils is distributed through every room served</li><li>Duct lining — flex duct with internal fiberglass liner is a primary risk</li><li>Supply and return registers — mold rings indicate duct contamination</li></ul></div></div>`},
 {module:1,modTitle:"Investigative Assessment & Reporting",modColor:"var(--a500)",modIcon:"🔍",title:"Scope of Work Definition & Report Writing",duration:"28 min",content:`<div class="lesson-header"><div class="mod-tag">Module 02 · Lesson 4 of 4</div><h1>Scope of Work Definition &amp; Report Writing</h1><div class="lesson-meta"><span class="badge badge-amber">28 min</span><span class="badge badge-gray">Documentation</span></div></div><div class="lesson-body"><p>The scope of work (SOW) document is the legal, technical, and ethical center of every remediation engagement. A well-written SOW protects the practitioner, the client, and the building's occupants.</p><h3>SOW Core Components</h3><div class="key-box"><ul><li><strong>Project identification:</strong> Address, date, assessor name and credentials, client name</li><li><strong>Summary of findings:</strong> Locations, areas, surface types, moisture readings</li><li><strong>Moisture source identification:</strong> Source, current status, required correction</li><li><strong>Remediation level per area:</strong> Level 1/2/3/4 per EPA/IICRC S520</li><li><strong>Material disposition:</strong> Which materials will be cleaned vs. removed</li><li><strong>Clearance criteria:</strong> Visual inspection + air sampling standard</li></ul></div><h3>Remediation Level Classification</h3><div class="table-scroll"><table class="data-table"><thead><tr><th>Level</th><th>Scope</th><th>Containment</th><th>PPE Min.</th></tr></thead><tbody><tr><td>Level 1</td><td>&lt;10 sq ft</td><td>Mini containment</td><td>N-95, gloves, goggles</td></tr><tr><td>Level 2</td><td>10–100 sq ft</td><td>Full containment, negative air</td><td>N-95 in exhausted environment</td></tr><tr><td>Level 3</td><td>&gt;100 sq ft</td><td>Full containment with airlock</td><td>Half-face APF recommended</td></tr><tr><td>Level 4</td><td>HVAC system</td><td>Full building pressure management</td><td>Full-face APF; written RPP required</td></tr></tbody></table></div><div class="insight"><div class="insight-label">⚡ Instructor Insight</div><p>The SOW must be written by the assessment — not by what the client wants to hear. Under-scoping a job to win the bid is a path to a callback, a dispute, and potential liability. The SOW must reflect what the data says.</p></div><h3>The Clearance Protocol</h3><ul><li>Visual clearance: no visible mold, dust, or debris. Written confirmation by remediator.</li><li>Air sampling: post-remediation spore counts at or below outdoor control levels.</li><li>Clearance letter: written document stating criteria have been met, with lab results attached.</li></ul><div class="warn-box"><div class="warn-label">🚨 Documentation Retention</div><p>Retain all assessment records, SOW documents, photo logs, sampling chain of custody forms, lab reports, and clearance letters for a minimum of 7 years. Your file is your defense.</p></div></div>`},
@@ -851,7 +854,7 @@ const state={
   currentLesson:0,completedLessons:new Set(),
   examAnswers:{},examSubmitted:false,
   studentName:'',studentEmail:'',
-  currentClass:null,startTime:new Date().toISOString(),
+  currentClass:null,startTime:new Date().toISOString(),currentScreen:'screen-login',
   lastExamResult:null
 };
 const narrator={enabled:false,speaking:false,paused:false,utterance:null,rate:1.0};
@@ -879,12 +882,14 @@ function showScreen(id){
   const topnav=document.getElementById('topnav');
   const mobileNav=document.getElementById('mobile-lesson-nav');
   const isLesson=id==='screen-lesson';
+  const shouldTrack=!!state.studentName&&['screen-welcome','screen-lesson','screen-downloads','screen-exam','screen-results'].includes(id);
+  state.currentScreen=id;
   topnav.style.display=(id==='screen-login')?'none':'flex';
   mobileNav.style.display=isLesson?'flex':'none';
   window.scrollTo(0,0);
   if(id!=='screen-login'&&id!=='screen-welcome') updateTopNav();
   if(!isLesson) narratorStop();
-  if(isLesson) startHeartbeat(); else stopHeartbeat();
+  if(shouldTrack) startHeartbeat(); else stopHeartbeat();
   if(id!=='screen-instructor') clearInterval(activeRefreshInterval);
   closeSidebar();
 }
@@ -943,7 +948,7 @@ async function loadLoginClasses(){
   const opts=[];
   if(classes.length>0){
     opts.push('<option value="">-- Select Your Class --</option>');
-    classes.forEach(c=>{opts.push(`<option value="${c.id}">${c.number} — ${c.name} (${c.date})</option>`);});
+    classes.forEach(c=>{opts.push(`<option value="${c.id}">${c.number} — ${c.name} (${formatClassDateRange(c)})</option>`);});
     opts.push('<option value="self-study">Self-Study / No Class</option>');
   } else {
     opts.push('<option value="self-study" selected>Self-Study / No Class</option>');
@@ -1100,7 +1105,7 @@ async function resumeStudent(){
 
   // Restore class
   if(d.classData){
-    state.currentClass={id:d.classData.id,number:d.classData.number,name:d.classData.name,date:d.classData.date||''};
+    state.currentClass={id:d.classData.id,number:d.classData.number,name:d.classData.name,date:d.classData.date||'',endDate:d.classData.endDate||''};
   } else if(d.exams[0]?.classId&&d.exams[0].classId!=='self-study'){
     try{const r=await window.storage.get('class:'+d.exams[0].classId,true);if(r)state.currentClass=JSON.parse(r.value);}
     catch(e){state.currentClass={id:'?',number:'N/A',name:'',date:''};}
@@ -1183,7 +1188,9 @@ function updateNarratorBtns(){
 async function saveHeartbeat(){
   if(!state.studentName) return;
   const lesson=LESSONS[state.currentLesson];
-  const data={sessionId:SESSION_ID,name:state.studentName,classId:state.currentClass?.id||'self-study',className:state.currentClass?.name||'Self-Study',classNumber:state.currentClass?.number||'N/A',lessonIndex:state.currentLesson,lessonTitle:lesson?.title||'',moduleNum:(lesson?.module||0)+1,lastSeen:new Date().toISOString(),startTime:state.startTime};
+  const screenLabels={'screen-welcome':'Course Home','screen-downloads':'Downloads','screen-exam':'Final Exam','screen-results':'Exam Results'};
+  const onLesson=state.currentScreen==='screen-lesson';
+  const data={sessionId:SESSION_ID,name:state.studentName,classId:state.currentClass?.id||'self-study',className:state.currentClass?.name||'Self-Study',classNumber:state.currentClass?.number||'N/A',lessonIndex:state.currentLesson,lessonTitle:onLesson?(lesson?.title||''):(screenLabels[state.currentScreen]||'On site'),moduleNum:onLesson?((lesson?.module||0)+1):'',screen:state.currentScreen||'',lastSeen:new Date().toISOString(),startTime:state.startTime};
   try{await window.storage.set('active:'+SESSION_ID,JSON.stringify(data),true);}catch(e){}
 }
 function startHeartbeat(){stopHeartbeat();saveHeartbeat();heartbeatInterval=setInterval(saveHeartbeat,30000);}
@@ -1247,9 +1254,23 @@ async function loadClassesMap(){
   return map;
 }
 
+function addDaysISO(dateStr, days){
+  const d=dateStr?new Date(dateStr):new Date();
+  d.setDate(d.getDate()+days);
+  return d.toISOString().split('T')[0];
+}
+
+function formatClassDateRange(c){
+  if(!c) return '';
+  const start=c.date||'';
+  const end=c.endDate||c.day2Date||'';
+  if(start&&end&&end!==start) return `${start} to ${end}`;
+  return start||end||'';
+}
+
 function buildClassSnapshot(classId, classesMap={}, fallback={}){
   if(classId==='self-study'){
-    return {id:'self-study',number:'N/A',name:'Self-Study',date:fallback.date||''};
+    return {id:'self-study',number:'N/A',name:'Self-Study',date:fallback.date||'',endDate:fallback.endDate||''};
   }
   const cls=classId?classesMap[classId]:null;
   return {
@@ -1257,6 +1278,7 @@ function buildClassSnapshot(classId, classesMap={}, fallback={}){
     number:cls?.number||fallback.classNumber||fallback.number||'N/A',
     name:cls?.name||fallback.className||fallback.name||(classId?'':''),
     date:cls?.date||fallback.date||'',
+    endDate:cls?.endDate||fallback.endDate||'',
     desc:cls?.desc||fallback.desc||''
   };
 }
@@ -1339,7 +1361,7 @@ async function syncStudentData(oldName, updates={}){
   if(normalizeStudentName(state.studentName)===oldKey){
     if(updates.name) state.studentName=updates.name;
     if(Object.prototype.hasOwnProperty.call(updates,'email')) state.studentEmail=updates.email||'';
-    if(classSnap) state.currentClass={id:classSnap.id,number:classSnap.number,name:classSnap.name,date:classSnap.date||''};
+    if(classSnap) state.currentClass={id:classSnap.id,number:classSnap.number,name:classSnap.name,date:classSnap.date||'',endDate:classSnap.endDate||''};
     if(state.lastExamResult){
       const nextResult={...state.lastExamResult};
       if(applyUpdates(nextResult)) state.lastExamResult=nextResult;
@@ -1375,7 +1397,7 @@ async function syncClassRecords(classId){
   }
 
   if(state.currentClass?.id===classId){
-    state.currentClass={id:classSnap.id,number:classSnap.number,name:classSnap.name,date:classSnap.date||''};
+    state.currentClass={id:classSnap.id,number:classSnap.number,name:classSnap.name,date:classSnap.date||'',endDate:classSnap.endDate||''};
   }
   if(state.lastExamResult?.classId===classId){
     state.lastExamResult=applyClassSnapshot({...state.lastExamResult},classSnap);
@@ -1811,7 +1833,7 @@ function buildCertPreviewHTML(){
     <div style="font-family:${branding.orgFont};font-size:${branding.orgSize};letter-spacing:0.12em;color:${branding.isVph?'#15803d':'#78350f'};margin-bottom:1px">${branding.orgName}</div>
     ${!branding.isVph?'<div style="font-family:var(--mono);font-size:8px;letter-spacing:0.15em;color:#92400e;opacity:0.7;margin-bottom:4px">IN COOPERATION WITH VAUGHN-PORTER HOLDINGS LLC</div>':''}
     <div class="c-top">Certificate of Completion</div>
-    <div class="c-course">Advanced Mold Assessment &amp; Green Remediation Workshop</div>
+    <div class="c-course">Advanced Mold Assessment &amp; Green Remediation 2-Day Workshop</div>
     <div class="c-div"></div>
     <div class="c-by">This certifies that</div>
     <div class="c-name">${cert.name}</div>
@@ -1822,7 +1844,7 @@ function buildCertPreviewHTML(){
       <div><div class="c-meta-label">Class No.</div><div class="c-meta-val">${cert.classNumber}</div></div>
       <div><div class="c-meta-label">Class Name</div><div class="c-meta-val">${cert.className}</div></div>
       <div><div class="c-meta-label">Valid Through</div><div class="c-meta-val">${cert.expiryDate}</div></div>
-      <div><div class="c-meta-label">CEU Hours</div><div class="c-meta-val">5.0 Hours</div></div>
+      <div><div class="c-meta-label">CEU Hours</div><div class="c-meta-val">10.0 Hours</div></div>
     </div>
     <div class="c-sigs">
       <div><div class="c-sig-line">INSTRUCTOR SIGNATURE / Kaylon Vaughn</div></div>
@@ -1903,7 +1925,7 @@ function printCertificateLegacy(){
 
 
   <div class="top-label">Certificate of Completion</div>
-  <div class="course-name">Advanced Mold Assessment &amp; Green Remediation Workshop</div>
+  <div class="course-name">Advanced Mold Assessment &amp; Green Remediation 2-Day Workshop</div>
   <div class="divider"></div>
   <div class="certifies">This certifies that</div>
   <div class="student-name">${name}</div>
@@ -1913,7 +1935,7 @@ function printCertificateLegacy(){
     <div><div class="meta-label">Date Issued</div><div class="meta-val">${today}</div></div>
     <div><div class="meta-label">Class Number</div><div class="meta-val">${cls.number||'N/A'}</div></div>
     <div><div class="meta-label">Class Name</div><div class="meta-val">${cls.name||'Self-Study'}</div></div>
-    <div><div class="meta-label">CEU Hours</div><div class="meta-val">5.0 Hours</div></div>
+    <div><div class="meta-label">CEU Hours</div><div class="meta-val">10.0 Hours</div></div>
   </div>
   <div class="sig-grid">
     <div><div class="sig-line">INSTRUCTOR SIGNATURE / Kaylon Vaughn</div></div>
@@ -1967,7 +1989,7 @@ async function printCertificate(){
   <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.1em;color:#92400e;margin-bottom:1px">${orgName}</div>
 
   <div class="top-label">Certificate of Completion</div>
-  <div class="course-name">Advanced Mold Assessment &amp; Green Remediation Workshop</div>
+  <div class="course-name">Advanced Mold Assessment &amp; Green Remediation 2-Day Workshop</div>
   <div class="divider"></div>
   <div class="certifies">This certifies that</div>
   <div class="student-name">${name}</div>
@@ -1977,7 +1999,7 @@ async function printCertificate(){
     <div><div class="meta-label">Date Issued</div><div class="meta-val">${today}</div></div>
     <div><div class="meta-label">Class Number</div><div class="meta-val">${cls.number||'N/A'}</div></div>
     <div><div class="meta-label">Class Name</div><div class="meta-val">${cls.name||'Self-Study'}</div></div>
-    <div><div class="meta-label">CEU Hours</div><div class="meta-val">5.0 Hours</div></div>
+    <div><div class="meta-label">CEU Hours</div><div class="meta-val">10.0 Hours</div></div>
   </div>
   <div class="sig-grid">
     <div><div class="sig-line">INSTRUCTOR SIGNATURE / Kaylon Vaughn</div></div>
@@ -2600,7 +2622,7 @@ async function renderActiveTab(el){
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
     <div>
       <div style="font-size:15px;font-weight:600;color:var(--t100)">Live Student Activity</div>
-      <div style="font-family:var(--mono);font-size:11px;color:var(--t500);margin-top:2px">Active within the last 5 minutes · auto-refreshes every 30s${window._fbUrl?'':' · <span style="color:var(--a400)">⚠ Firebase not configured — only shows this device</span>'}</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--t500);margin-top:2px">Active within the last 5 minutes · auto-refreshes every 30s${window._fbUrl?'':' · <span style="color:var(--a400)">⚠ Cloud database not configured — only shows this device</span>'}</div>
     </div>
     <div style="display:flex;align-items:center;gap:8px">
       <div style="width:7px;height:7px;border-radius:50%;background:${sessions.length>0?'var(--g500)':'var(--t600)'}"></div>
@@ -2627,7 +2649,7 @@ async function renderActiveTab(el){
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
         <div style="font-family:var(--mono);font-size:11px;color:var(--t400);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
           ${s.lessonTitle?'📖 '+s.lessonTitle:'—'}
-          <span style="color:var(--t600);margin-left:6px">MOD ${s.moduleNum||'?'}</span>
+          ${s.moduleNum?`<span style="color:var(--t600);margin-left:6px">MOD ${s.moduleNum}</span>`:''}
         </div>
         <button class="btn btn-ghost btn-sm" onclick="addLiveStudentToRoster(${JSON.stringify(s).replace(/"/g,'&quot;')})" title="Add to class roster">+ Roster</button>
         <button class="btn btn-ghost btn-sm" onclick="viewStudentProfile(${JSON.stringify(s.name).replace(/"/g,'&quot;')})" title="View student profile">👤 Profile</button>
@@ -2863,7 +2885,10 @@ async function renderClassesTab(el){
       <div style="display:flex;flex-direction:column;gap:12px">
         <div><label class="field-label">Class Number *</label><input class="field-input" id="new-class-num" placeholder="e.g. CLASS-2025-001"></div>
         <div><label class="field-label">Class Name *</label><input class="field-input" id="new-class-name" placeholder="e.g. Spring Workshop"></div>
-        <div><label class="field-label">Class Date *</label><input class="field-input" id="new-class-date" type="date" value="${new Date().toISOString().split('T')[0]}"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div><label class="field-label">Day 1 Date *</label><input class="field-input" id="new-class-date" type="date" value="${new Date().toISOString().split('T')[0]}" onchange="syncClassEndDate()"></div>
+          <div><label class="field-label">Day 2 Date *</label><input class="field-input" id="new-class-end-date" type="date" value="${addDaysISO(new Date().toISOString().split('T')[0],1)}"></div>
+        </div>
         <div><label class="field-label">Description</label><input class="field-input" id="new-class-desc" placeholder="Optional notes"></div>
         <button class="btn btn-primary" onclick="createClass()">+ Create Class</button>
       </div>
@@ -2879,7 +2904,7 @@ async function renderClassesTab(el){
               ${cnt>0?`<span class="badge badge-green" style="padding:1px 7px;font-size:9px">${cnt} student${cnt>1?'s':''}</span>`:''}
             </div>
             <div style="font-size:13px;font-weight:600;color:var(--t100)">${c.name}</div>
-            <div style="font-family:var(--mono);font-size:10px;color:var(--t500);margin-top:2px">${c.date}${c.desc?` · ${c.desc}`:''}</div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--t500);margin-top:2px">${formatClassDateRange(c)}${c.desc?` · ${c.desc}`:''}</div>
           </div>
           <button class="btn btn-ghost btn-sm" onclick="editClass('${c.id}')">Edit</button>
           <button class="btn btn-danger btn-sm" onclick="deleteClass('${c.id}')">Delete</button>
@@ -2889,17 +2914,24 @@ async function renderClassesTab(el){
   </div>`;
 }
 
+function syncClassEndDate(){
+  const start=document.getElementById('new-class-date')?.value;
+  const endEl=document.getElementById('new-class-end-date');
+  if(start&&endEl&&!endEl.value) endEl.value=addDaysISO(start,1);
+}
+
 async function createClass(){
   const num=document.getElementById('new-class-num')?.value.trim();
   const name=document.getElementById('new-class-name')?.value.trim();
   const date=document.getElementById('new-class-date')?.value;
+  const endDate=document.getElementById('new-class-end-date')?.value||addDaysISO(date,1);
   const desc=document.getElementById('new-class-desc')?.value.trim();
-  if(!num||!name||!date){alert('Class Number, Name, and Date are required.');return;}
+  if(!num||!name||!date||!endDate){alert('Class Number, Name, Day 1, and Day 2 dates are required.');return;}
   const isEdit=!!window._editingClassId;
   const id=window._editingClassId||'class-'+Date.now().toString(36);
   window._editingClassId=null;
   try{
-    await window.storage.set('class:'+id,JSON.stringify({id,number:num,name,date,desc:desc||''}),true);
+    await window.storage.set('class:'+id,JSON.stringify({id,number:num,name,date,endDate,desc:desc||'',duration:'2 days'}),true);
     if(isEdit) await syncClassRecords(id);
     await loadLoginClasses();
     showToast(isEdit?'Class updated!':'Class created!');
@@ -2914,11 +2946,13 @@ async function editClass(id){
     const numEl=document.getElementById('new-class-num');
     const nameEl=document.getElementById('new-class-name');
     const dateEl=document.getElementById('new-class-date');
+    const endDateEl=document.getElementById('new-class-end-date');
     const descEl=document.getElementById('new-class-desc');
     const btn=document.querySelector('button[onclick="createClass()"]');
     if(numEl)numEl.value=c.number;
     if(nameEl)nameEl.value=c.name;
     if(dateEl)dateEl.value=c.date;
+    if(endDateEl)endDateEl.value=c.endDate||addDaysISO(c.date,1);
     if(descEl)descEl.value=c.desc||'';
     if(btn)btn.textContent='✓ Update Class';
     window._editingClassId=id;
@@ -3018,7 +3052,7 @@ async function renderSettingsTab(el){
   <div style="max-width:500px;display:flex;flex-direction:column;gap:20px">
     <div style="background:var(--bg3);border:1px solid var(--border-g);border-radius:var(--radius);padding:20px">
       <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--g500);margin-bottom:12px">🔥 Firebase — Cross-Device Live Tracking</div>
-      <p style="font-size:12px;color:var(--t400);margin-bottom:12px">Required to see students from other computers. <a href="https://console.firebase.google.com" target="_blank" style="color:var(--g400)">Create a free Firebase project</a> → Realtime Database → set rules to <code style="background:var(--bg2);padding:1px 5px;border-radius:3px;font-size:11px">{".read":true,".write":true}</code> → copy the URL below.</p>
+      <p style="font-size:12px;color:var(--t400);margin-bottom:12px">Required to see students and new accounts from any computer while logged in as instructor. For a deploy-wide setup, set <code style="background:var(--bg2);padding:1px 5px;border-radius:3px;font-size:11px">SITE_FIREBASE_URL</code> in this file, or paste the URL here for this browser. <a href="https://console.firebase.google.com" target="_blank" style="color:var(--g400)">Create a free Firebase project</a> → Realtime Database → set rules to <code style="background:var(--bg2);padding:1px 5px;border-radius:3px;font-size:11px">{".read":true,".write":true}</code>.</p>
       <div style="display:flex;gap:10px;align-items:flex-end">
         <div style="flex:1"><label class="field-label">Database URL</label><input class="field-input" id="set-fb-url" type="url" placeholder="https://your-project-default-rtdb.firebaseio.com" value="${window._fbUrl||''}"></div>
         <button class="btn btn-primary btn-sm" onclick="saveFirebaseUrl()">Save</button>
@@ -3057,7 +3091,8 @@ async function renderSettingsTab(el){
         <div>Lessons: <strong style="color:var(--t100)">12</strong></div>
         <div>Exam Questions: <strong style="color:var(--t100)">30</strong></div>
         <div>Pass Threshold: <strong style="color:var(--t100)">75% (23/30)</strong></div>
-        <div>CEU Hours: <strong style="color:var(--t100)">5.0</strong></div>
+        <div>Course Length: <strong style="color:var(--t100)">2 Days</strong></div>
+        <div>CEU Hours: <strong style="color:var(--t100)">10.0</strong></div>
         <div>Cert Validity: <strong style="color:var(--t100)">2 Years</strong></div>
         <div>Retake Cooldown: <strong style="color:var(--t100)">24 Hours</strong></div>
         <div>Default Notification Email: <strong style="color:var(--g400)">${INSTRUCTOR_EMAIL}</strong></div>
@@ -3078,7 +3113,7 @@ async function saveSetting(key,inputId,msg){
 }
 
 function saveFirebaseUrl(){
-  const url=document.getElementById('set-fb-url')?.value.trim();
+  const url=normalizeFirebaseUrl(document.getElementById('set-fb-url')?.value);
   if(!url){alert('Please enter the Firebase Database URL.');return;}
   localStorage.setItem('mold_firebase_url',url);
   window._fbUrl=url;
@@ -3337,7 +3372,7 @@ function buildCertPDF(data){
     ['Class Number',data.classNumber||'N/A'],
     ['Class Name',data.className||'Self-Study'],
     ['Valid Through',expiry],
-    ['CEU Hours','5.0 Hours'],
+    ['CEU Hours','10.0 Hours'],
     ['Certificate ID',(data.certId||'').substring(0,18)]
   ];
   const colW=(W-120)/3; const startX=60;
@@ -3405,7 +3440,7 @@ async function emailCertToStudent(){
         score:r.pct+'%',cert_id:r.certId,
         class_name:r.className,class_number:r.classNumber,
         date:new Date(r.timestamp).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}),
-        ceu_hours:'5.0'
+        ceu_hours:'10.0'
       });
       showToast('✉ Certificate email sent!');return;
     }catch(err){console.warn('EmailJS failed',err);}
