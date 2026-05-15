@@ -403,7 +403,7 @@ body.light-mode .toast{background:#fff;color:#16a34a}
     <button id="mobile-sidebar-btn" onclick="toggleSidebar()">☰ Lessons</button>
     <div class="topnav-progress">
       <div class="progress-bar"><div class="progress-fill" id="topProgressFill" style="width:0%"></div></div>
-      <div style="font-family:var(--mono);font-size:10px;color:var(--t500);text-align:center;margin-top:3px" id="topProgressLabel">0 of 12</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--t500);text-align:center;margin-top:3px" id="topProgressLabel">0 of 18</div>
     </div>
     <div class="topnav-meta" id="topnavMeta"></div>
     <button class="theme-btn" id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle light/dark mode">🌙 Dark</button>
@@ -512,9 +512,9 @@ body.light-mode .toast{background:#fff;color:#16a34a}
         <button class="btn btn-ghost" onclick="showScreen('screen-downloads')">⬇ &nbsp;Downloads</button>
       </div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;max-width:480px;margin-top:20px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden" class="fade-in d5">
-        <div style="background:var(--bg2);padding:14px;text-align:center"><div style="font-family:var(--display);font-size:1.8rem;color:var(--g400);line-height:1">3</div><div style="font-family:var(--mono);font-size:9px;color:var(--t500);letter-spacing:0.1em;text-transform:uppercase;margin-top:2px">Modules</div></div>
-        <div style="background:var(--bg2);padding:14px;text-align:center"><div style="font-family:var(--display);font-size:1.8rem;color:var(--g400);line-height:1">12</div><div style="font-family:var(--mono);font-size:9px;color:var(--t500);letter-spacing:0.1em;text-transform:uppercase;margin-top:2px">Lessons</div></div>
-        <div style="background:var(--bg2);padding:14px;text-align:center"><div style="font-family:var(--display);font-size:1.8rem;color:var(--g400);line-height:1">30</div><div style="font-family:var(--mono);font-size:9px;color:var(--t500);letter-spacing:0.1em;text-transform:uppercase;margin-top:2px">Exam Q's</div></div>
+        <div style="background:var(--bg2);padding:14px;text-align:center"><div style="font-family:var(--display);font-size:1.8rem;color:var(--g400);line-height:1">6</div><div style="font-family:var(--mono);font-size:9px;color:var(--t500);letter-spacing:0.1em;text-transform:uppercase;margin-top:2px">Modules</div></div>
+        <div style="background:var(--bg2);padding:14px;text-align:center"><div style="font-family:var(--display);font-size:1.8rem;color:var(--g400);line-height:1">18</div><div style="font-family:var(--mono);font-size:9px;color:var(--t500);letter-spacing:0.1em;text-transform:uppercase;margin-top:2px">Lessons</div></div>
+        <div style="background:var(--bg2);padding:14px;text-align:center"><div style="font-family:var(--display);font-size:1.8rem;color:var(--g400);line-height:1">40</div><div style="font-family:var(--mono);font-size:9px;color:var(--t500);letter-spacing:0.1em;text-transform:uppercase;margin-top:2px">Exam Q's</div></div>
         <div style="background:var(--bg2);padding:14px;text-align:center"><div style="font-family:var(--display);font-size:1.8rem;color:var(--g400);line-height:1">75%</div><div style="font-family:var(--mono);font-size:9px;color:var(--t500);letter-spacing:0.1em;text-transform:uppercase;margin-top:2px">Pass</div></div>
       </div>
     </div>
@@ -525,38 +525,16 @@ body.light-mode .toast{background:#fff;color:#16a34a}
       <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--g500);margin-bottom:12px">Your Progress</div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:16px">
         <div class="progress-stat"><div class="progress-stat-num" id="dash-lessons-done">0</div><div class="progress-stat-label">Lessons Done</div></div>
-        <div class="progress-stat"><div class="progress-stat-num" id="dash-lessons-total">12</div><div class="progress-stat-label">Total Lessons</div></div>
+        <div class="progress-stat"><div class="progress-stat-num" id="dash-lessons-total">18</div><div class="progress-stat-label">Total Lessons</div></div>
         <div class="progress-stat"><div class="progress-stat-num" id="dash-pct">0%</div><div class="progress-stat-label">Complete</div></div>
         <div class="progress-stat"><div class="progress-stat-num" id="dash-cert-status" style="font-size:1.2rem">—</div><div class="progress-stat-label">Cert Status</div></div>
       </div>
       <div class="progress-bar" style="height:6px"><div class="progress-fill" id="dash-progress-bar" style="width:0%"></div></div>
     </div>
     <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--g500);margin-bottom:20px">Course Modules</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px">
-      <div class="mod-card fade-in d1" onclick="goToLesson(0)">
-        <div class="mod-card-top">
-          <div class="mod-icon" style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25)">🌿</div>
-          <div><div style="font-family:var(--mono);font-size:10px;color:var(--g500);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px">Module 01</div><div style="font-size:14px;font-weight:600;color:var(--t100)">Green Remediation Protocols</div><div style="font-size:12px;color:var(--t500);margin-top:2px">4 lessons · ~100 min</div></div>
-        </div>
-        <div class="mod-body"><ul class="mod-lessons-list" id="mod0-list"><li>The Removal-First Doctrine</li><li>HEPA Vacuuming Procedures</li><li>Damp Wiping &amp; "Cut &amp; Toss"</li><li>Negative Air &amp; Exhaust to Outdoors</li></ul></div>
-      </div>
-      <div class="mod-card fade-in d2" onclick="goToLesson(4)">
-        <div class="mod-card-top">
-          <div class="mod-icon" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25)">🔍</div>
-          <div><div style="font-family:var(--mono);font-size:10px;color:var(--a400);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px">Module 02</div><div style="font-size:14px;font-weight:600;color:var(--t100)">Investigative Assessment</div><div style="font-size:12px;color:var(--t500);margin-top:2px">4 lessons · ~100 min</div></div>
-        </div>
-        <div class="mod-body"><ul class="mod-lessons-list" id="mod1-list"><li>The Mold Triangle</li><li>Moisture Mapping Instruments</li><li>Investigating Hidden Mold</li><li>Scope of Work &amp; Reporting</li></ul></div>
-      </div>
-      <div class="mod-card fade-in d3" onclick="goToLesson(8)">
-        <div class="mod-card-top">
-          <div class="mod-icon" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25)">⚠️</div>
-          <div><div style="font-family:var(--mono);font-size:10px;color:var(--r400);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px">Module 03</div><div style="font-size:14px;font-weight:600;color:var(--t100)">Safety &amp; Legal Compliance</div><div style="font-size:12px;color:var(--t500);margin-top:2px">4 lessons · ~100 min</div></div>
-        </div>
-        <div class="mod-body"><ul class="mod-lessons-list" id="mod2-list"><li>Respiratory Protection &amp; OSHA</li><li>Lead &amp; Asbestos Triggers</li><li>EPA FIFRA &amp; The Biocide Trap</li><li>Documentation &amp; Liability</li></ul></div>
-      </div>
-    </div>
+    <div id="course-modules-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px"></div>
     <div style="margin-top:32px;padding:24px;background:var(--bg3);border:1px solid var(--border-g);border-radius:var(--radius);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
-      <div><div style="font-size:14px;font-weight:600;color:var(--t100);margin-bottom:4px">📝 Final Certification Exam</div><div style="font-size:13px;color:var(--t400)">30 questions · Score ≥75% to earn your certificate</div></div>
+      <div><div style="font-size:14px;font-weight:600;color:var(--t100);margin-bottom:4px">📝 Final Certification Exam</div><div style="font-size:13px;color:var(--t400)">40 questions · Score ≥75% to earn your certificate</div></div>
       <button class="btn btn-ghost" onclick="goToExam()">Take Exam →</button>
     </div>
     <div style="margin-top:32px;padding-top:16px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
@@ -651,12 +629,12 @@ body.light-mode .toast{background:#fff;color:#16a34a}
       <button class="btn btn-ghost" onclick="goHome()" style="margin-bottom:32px">← Back</button>
       <div style="margin-bottom:32px">
         <h2 style="font-size:clamp(1.4rem,3vw,2rem);color:var(--t100);margin-bottom:8px">Resource Vault</h2>
-        <p style="font-size:13px;color:var(--t400);margin-bottom:20px">8 print-ready field documents built from this course. Click any card to download.</p>
+        <p style="font-size:13px;color:var(--t400);margin-bottom:20px">11 print-ready field documents and Day 2 activity packets built from this course. Click any card to download.</p>
         <div style="background:var(--bg3);border:1px solid var(--border-g);border-left:3px solid var(--g500);border-radius:var(--radius);padding:14px 18px;display:flex;align-items:flex-start;gap:12px">
           <span style="font-size:1.3rem;margin-top:2px">📂</span>
           <div>
-            <div style="font-size:12px;font-weight:600;color:var(--g400);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px">Course Materials · 8 Documents</div>
-            <div style="font-size:12px;color:var(--t400);line-height:1.6">SOW Template &nbsp;·&nbsp; Moisture Mapping Sheet &nbsp;·&nbsp; OSHA RPP &nbsp;·&nbsp; Pre-Remediation Checklist &nbsp;·&nbsp; Clearance Protocol &nbsp;·&nbsp; Biocide FIFRA Reference &nbsp;·&nbsp; PPE Selection Guide &nbsp;·&nbsp; Hidden Mold Indicator Reference</div>
+            <div style="font-size:12px;font-weight:600;color:var(--g400);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px">Course Materials · 11 Documents</div>
+            <div style="font-size:12px;color:var(--t400);line-height:1.6">SOW Template &nbsp;·&nbsp; Moisture Mapping Sheet &nbsp;·&nbsp; OSHA RPP &nbsp;·&nbsp; Pre-Remediation Checklist &nbsp;·&nbsp; Clearance Protocol &nbsp;·&nbsp; Biocide FIFRA Reference &nbsp;·&nbsp; PPE Selection Guide &nbsp;·&nbsp; Hidden Mold Indicator Reference &nbsp;·&nbsp; Day 2 Jobsite Setup &nbsp;·&nbsp; Clearance Decision Worksheet &nbsp;·&nbsp; Capstone Packet</div>
           </div>
         </div>
       </div>
@@ -770,6 +748,9 @@ const DOWNLOADS=[
   {icon:'📊',name:'Biocide FIFRA Quick Reference',type:'PDF',desc:'Label-law compliance checklist for antimicrobial applications',url:'./Files/biocide-fifra-quick-reference.pdf'},
   {icon:'⚠️',name:'PPE Selection Guide',type:'PDF',desc:'N-95 vs. HEPA APF decision matrix by remediation level',url:'./Files/ppe-selection-guide.pdf'},
   {icon:'🔍',name:'Hidden Mold Indicator Reference',type:'PDF',desc:'Visual indicators, instrument readings, and investigation decision tree',url:'./Files/hidden-mold-indicator-reference.pdf'},
+  {icon:'🧰',name:'Day 2 Jobsite Setup Walkthrough',type:'TXT',desc:'Crew-lead checklist for arrival briefing, containment walkdown, and tool staging',content:`Day 2 Jobsite Setup Walkthrough\n\n1. Assign roles: lead, documenter, containment tech, equipment tech, runner.\n2. Confirm the SOW, stop-work triggers, and communication chain.\n3. Walk the boundary: work zone, clean zone, decon path, waste path, exits.\n4. Verify power, GFCI, cords, trip hazards, and fire egress.\n5. Stage HEPA vacuum, NAM, ducting, 6-mil poly, tape, PPE, waste bags, manometer, moisture meter, camera.\n6. Record baseline photos and instrument readings before disturbing materials.\n7. Start the job log with time, personnel, weather, building status, and client contact.`},
+  {icon:'🧪',name:'Day 2 Clearance Decision Worksheet',type:'TXT',desc:'Field prompt for deciding when a work area is ready for clearance sampling',content:`Day 2 Clearance Decision Worksheet\n\nVisual condition: no visible mold, no settled dust, no debris, no staining left unexplained.\nMoisture condition: source corrected, drying target met, readings documented.\nContainment condition: negative pressure maintained, no breach history unresolved.\nCleaning condition: HEPA vacuumed, damp wiped, final HEPA pass completed.\nDocumentation condition: photo log, waste log, equipment log, and deviations complete.\nDecision: Ready for independent clearance / Not ready / Stop and revise SOW.`},
+  {icon:'📋',name:'Day 2 Capstone Scenario Packet',type:'TXT',desc:'Small-group capstone instructions for building a complete remediation plan',content:`Day 2 Capstone Scenario Packet\n\nScenario: A 1960 single-family home has chronic bathroom wall moisture, visible mold on drywall, suspected vinyl floor tile, and a musty HVAC return.\n\nTeam deliverables:\n1. Hazard screen: lead/asbestos triggers and required pre-work calls.\n2. Moisture plan: instruments, readings, and source-correction proof needed.\n3. Containment plan: boundaries, NAM placement, exhaust route, and pressure target.\n4. Work sequence: remove, HEPA, damp wipe, waste handling, final clean.\n5. Documentation package: SOW notes, photo list, job log, and clearance criteria.\n6. Client explanation: a 90-second plain-language summary.`},
 ];
 
 // ═══════════════════════════════════════════════════════════════════
@@ -789,6 +770,15 @@ const LESSONS=[
 {module:2,modTitle:"Safety & Legal Compliance",modColor:"var(--r500)",modIcon:"⚠️",title:"EPA FIFRA & The Biocide Trap",duration:"22 min",content:`<div class="lesson-header"><div class="mod-tag">Module 03 · Lesson 3 of 4</div><h1>EPA FIFRA &amp; The Biocide Trap</h1><div class="lesson-meta"><span class="badge badge-red">22 min</span><span class="badge badge-red">Legal Risk</span></div></div><div class="lesson-body"><p>FIFRA governs every antimicrobial pesticide used in the United States. For mold remediators, FIFRA makes biocide application not merely ineffective — but potentially illegal — when performed outside strict label compliance.</p><h3>What FIFRA Regulates</h3><div class="key-box"><ul><li>Commercial "mold foggers" and "mold killers"</li><li>Quaternary ammonium compounds marketed as antimicrobials</li><li>Sodium hypochlorite (bleach) solutions applied as a mold treatment</li><li>Any product bearing the statement "kills mold" or "prevents mold growth"</li></ul></div><h3>The Label Is the Law</h3><div class="table-scroll"><table class="data-table"><thead><tr><th>Violation Type</th><th>Example</th><th>Status</th></tr></thead><tbody><tr><td>Off-label surface</td><td>Applying biocide registered for hard surfaces to drywall</td><td class="bad">FIFRA violation</td></tr><tr><td>Off-label concentration</td><td>Diluting at a different ratio than specified</td><td class="bad">FIFRA violation</td></tr><tr><td>Off-label application method</td><td>Fogging a product registered for spray only</td><td class="bad">FIFRA violation</td></tr></tbody></table></div><div class="warn-box"><div class="warn-label">🚨 Penalties</div><p>FIFRA violations carry civil penalties up to <strong>$25,000 per violation</strong> for commercial applicators. Criminal penalties for knowing violations: up to <strong>$50,000 per day</strong> and/or up to <strong>1 year imprisonment.</strong></p></div><div class="insight"><div class="insight-label">⚡ Instructor Insight</div><p>When a client says "I saw on YouTube that if you just fog the house with bleach it will kill all the mold" — walk them through: (1) bleach is not registered for fogging; (2) fogging does not remove the mold; (3) chlorine gas in an enclosed space is a respiratory hazard; (4) you work within the law.</p></div></div>`},
 {module:2,modTitle:"Safety & Legal Compliance",modColor:"var(--r500)",modIcon:"⚠️",title:"Documentation, Liability & Professional Ethics",duration:"20 min",content:`<div class="lesson-header"><div class="mod-tag">Module 03 · Lesson 4 of 4</div><h1>Documentation, Liability &amp; Professional Ethics</h1><div class="lesson-meta"><span class="badge badge-red">20 min</span><span class="badge badge-gray">Professional Practice</span></div></div><div class="lesson-body"><p>Professional liability traces back to one of three failures: inadequate documentation, failure to disclose a known risk, or work that exceeded the practitioner's authorization.</p><h3>The Non-Negotiable Documentation Set</h3><div class="table-scroll"><table class="data-table"><thead><tr><th>Document</th><th>Required Content</th><th>Retention</th></tr></thead><tbody><tr><td>Written Scope of Work</td><td>Findings, methods, materials, safety protocols, clearance criteria; client-signed</td><td>7+ years</td></tr><tr><td>Pre-Remediation Photo Log</td><td>All affected areas with timestamps, scale references</td><td>7+ years</td></tr><tr><td>Moisture Map</td><td>All readings, instrument, date/time, floor plan sketch</td><td>7+ years</td></tr><tr><td>Clearance Letter</td><td>Statement of clearance criteria met; lab results; signed by assessor</td><td>7+ years</td></tr></tbody></table></div><div class="insight"><div class="insight-label">⚡ Instructor Insight</div><p>The documentation principle that prevents 90% of disputes: <em>if you didn't write it down, it didn't happen.</em> Verbal agreements, verbal disclosures, and verbal scope changes are unenforceable and indefensible.</p></div><h3>Scope Creep — A Legal and Ethical Risk</h3><ol><li>Stop work in the newly identified area</li><li>Document the discovery with photographs and written notes</li><li>Notify the client in writing immediately</li><li>Prepare a written scope amendment</li><li>Obtain client signature before any additional work begins</li></ol><div class="warn-box"><div class="warn-label">🚨 Assessment-Remediation Conflict</div><p>Post-remediation clearance sampling must be performed by a party independent of the remediating contractor. Your clearance letter is worthless if you are both the person who did the work and the person who declared it done.</p></div></div>`}
 ];
+
+LESSONS.push(
+{module:3,modTitle:"Day 2 Field Operations",modColor:"var(--g400)",modIcon:"🧰",title:"Jobsite Setup: From Arrival to First Cut",duration:"45 min",content:`<div class="lesson-header"><div class="mod-tag">Module 04 · Lesson 1 of 2</div><h1>Jobsite Setup: From Arrival to First Cut</h1><div class="lesson-meta"><span class="badge badge-green">45 min</span><span class="badge badge-gray">Day 2 Field Lab</span></div></div><div class="lesson-body"><p>Day 2 turns the technical rules from Day 1 into a repeatable jobsite workflow. The first hour of a mold job decides whether the project will be controlled, documented, and defensible, or whether the crew will spend the rest of the day catching up to mistakes made at arrival.</p><h3>The Arrival Briefing</h3><p>The crew lead begins with a short, structured briefing before tools move inside. Review the scope, known hazards, stop-work triggers, occupant restrictions, utility concerns, and who has authority to change the work. Every worker should know the clean path, dirty path, decon point, waste path, and where to report a new discovery.</p><div class="table-scroll"><table class="data-table"><thead><tr><th>Arrival Item</th><th>Instructor Standard</th><th>Common Failure</th></tr></thead><tbody><tr><td>Scope confirmation</td><td>Read the written SOW and mark the work boundary</td><td>Starting from memory or verbal direction</td></tr><tr><td>Hazard screen</td><td>Confirm lead, asbestos, electrical, trip, and occupant risks</td><td>Assuming old materials are safe</td></tr><tr><td>Role assignment</td><td>Lead, documenter, containment tech, equipment tech, runner</td><td>Everyone doing everything</td></tr><tr><td>Baseline record</td><td>Photos, moisture readings, pressure target, equipment serials</td><td>Taking pictures only after demolition begins</td></tr></tbody></table></div><h3>Clean Zone / Work Zone / Decon Path</h3><p>Professional setup separates the property into three mental maps. The work zone contains contamination and disturbance. The clean zone stays clean enough for tools, records, and client communication. The decon path connects them without crossing through occupied space whenever possible.</p><div class="key-box"><ul><li><strong>Work zone:</strong> containment, negative air machine, waste staging, removal work</li><li><strong>Decon path:</strong> PPE removal, bag wipe-down, tool wipe-down, controlled exit</li><li><strong>Clean zone:</strong> paperwork, spare PPE, uncontaminated tools, client check-ins</li><li><strong>Waste path:</strong> shortest route that avoids occupant exposure and protects finishes</li></ul></div><div class="warn-box"><div class="warn-label">Stop-Work Trigger</div><p>If the crew finds suspect asbestos-containing material, lead-painted substrate disturbance, active sewage, energized wet wiring, structural instability, or mold outside the signed scope, the correct action is to stop, document, notify, and revise the plan before continuing.</p></div><h3>Hands-On Activity: 15-Minute Setup Walkdown</h3><div class="insight"><div class="insight-label">Activity</div><p>Give students a room photo or live training space. In small groups, they must mark the work zone, clean zone, decon path, exhaust route, waste path, and first five photos they would take. Each group then explains one decision that protects workers and one decision that protects the client.</p></div></div>`},
+{module:3,modTitle:"Day 2 Field Operations",modColor:"var(--g400)",modIcon:"🧰",title:"Containment Buildout & Pressure Verification",duration:"45 min",content:`<div class="lesson-header"><div class="mod-tag">Module 04 · Lesson 2 of 2</div><h1>Containment Buildout &amp; Pressure Verification</h1><div class="lesson-meta"><span class="badge badge-green">45 min</span><span class="badge badge-red">Hands-On Control</span></div></div><div class="lesson-body"><p>Containment is not plastic on a doorway. It is an engineered temporary system that controls particle movement, crew movement, and client risk. The test of containment is not how it looks; the test is whether air moves from clean to contaminated and exhausts outdoors through the negative air machine.</p><h3>Build Sequence</h3><ol><li>Protect flooring and establish the clean staging area.</li><li>Install critical barriers over openings, supply registers, returns, and bypasses.</li><li>Build the containment wall or doorway flap with 6-mil poly and sealed seams.</li><li>Place the negative air machine inside the work zone.</li><li>Route ducting outdoors through a sealed window insert or approved exterior penetration.</li><li>Start the NAM and verify negative pressure before disturbing material.</li></ol><h3>Pressure Verification</h3><p>The target is typically -0.02 to -0.05 inches water column. A pressure reading is not a decoration; it is proof that the system is pulling air inward rather than allowing contamination to drift outward.</p><div class="table-scroll"><table class="data-table"><thead><tr><th>Reading</th><th>Meaning</th><th>Correction</th></tr></thead><tbody><tr><td>0.00 in. w.c.</td><td>No verified pressure control</td><td>Check NAM operation, leaks, and duct route</td></tr><tr><td>-0.01 in. w.c.</td><td>Weak control</td><td>Seal bypasses or increase exhaust capacity</td></tr><tr><td>-0.02 to -0.05 in. w.c.</td><td>Acceptable working range</td><td>Document and monitor</td></tr><tr><td>More negative than -0.08</td><td>May stress barriers or doors</td><td>Evaluate airflow balance and barrier integrity</td></tr></tbody></table></div><div class="warn-box"><div class="warn-label">Critical Error</div><p>Never connect a negative air machine exhaust to an HVAC return, attic, crawlspace, garage, or interior room. If the exhaust is not outdoors, the job is not under defensible engineering control.</p></div><h3>Hands-On Activity: Smoke and Gauge Test</h3><div class="insight"><div class="insight-label">Activity</div><p>Students inspect a mock containment. They must identify three leaks, correct them, confirm inward air movement at the flap, and record a manometer reading. The instructor should require students to say out loud what evidence proves containment is working.</p></div></div>`},
+{module:4,modTitle:"Day 2 Remediation Workflow",modColor:"var(--a400)",modIcon:"🧪",title:"Removal, Cleaning & Waste Handling Workflow",duration:"45 min",content:`<div class="lesson-header"><div class="mod-tag">Module 05 · Lesson 1 of 2</div><h1>Removal, Cleaning &amp; Waste Handling Workflow</h1><div class="lesson-meta"><span class="badge badge-amber">45 min</span><span class="badge badge-gray">Production Sequence</span></div></div><div class="lesson-body"><p>The safest remediation workflow is boring on purpose. It follows the same order every time: isolate, document, remove unsalvageable materials, clean salvageable materials, package waste, clean again, and verify readiness for clearance.</p><h3>Removal Sequence</h3><ol><li>Pre-clean nearby surfaces with HEPA vacuuming where disturbance could release settled particles.</li><li>Lightly mist only as needed for dust control; do not soak materials.</li><li>Cut porous contaminated materials at defensible boundaries.</li><li>Bag waste inside containment using 6-mil bags or wrapped poly.</li><li>Wipe bag exteriors before moving through the decon path.</li><li>Log removed materials with photos and approximate quantities.</li></ol><h3>Cleaning Workflow</h3><div class="table-scroll"><table class="data-table"><thead><tr><th>Surface Type</th><th>Field Decision</th><th>Approved Action</th></tr></thead><tbody><tr><td>Paper-faced drywall with visible growth</td><td>Porous and colonized</td><td>Remove and dispose</td></tr><tr><td>Framing lumber with surface growth</td><td>Semi-porous structural material</td><td>HEPA vacuum, damp wipe, detail clean, dry</td></tr><tr><td>Metal, tile, glass, plastic</td><td>Non-porous</td><td>HEPA vacuum and damp wipe</td></tr><tr><td>Insulation</td><td>Porous and impossible to clean in place</td><td>Remove and dispose</td></tr></tbody></table></div><div class="key-box"><ul><li>Clean from high to low and from farthest point toward the decon exit.</li><li>Change wipes frequently; a dirty wipe becomes a spreading tool.</li><li>Do not mix clean tools and contaminated waste in the same staging area.</li><li>Do not declare completion until dust, debris, and visible residue are gone.</li></ul></div><h3>Hands-On Activity: Work Sequence Drill</h3><div class="insight"><div class="insight-label">Activity</div><p>Students receive a mixed-material room scenario. They must sort each material into remove, clean, protect, or stop-work. They then write a six-step work sequence that a crew could follow without verbal clarification.</p></div></div>`},
+{module:4,modTitle:"Day 2 Remediation Workflow",modColor:"var(--a400)",modIcon:"🧪",title:"Final Cleaning, Detail Verification & Clearance Prep",duration:"45 min",content:`<div class="lesson-header"><div class="mod-tag">Module 05 · Lesson 2 of 2</div><h1>Final Cleaning, Detail Verification &amp; Clearance Prep</h1><div class="lesson-meta"><span class="badge badge-amber">45 min</span><span class="badge badge-red">Clearance Readiness</span></div></div><div class="lesson-body"><p>Clearance prep begins before the independent assessor arrives. A professional crew does not hope for clearance; it verifies that the work area is visually clean, dry, controlled, and fully documented.</p><h3>Final Cleaning Standard</h3><p>Final cleaning is a second pass with a different mindset. Production cleaning removes the obvious contamination. Final cleaning targets dust ledges, folds in poly, fastener heads, horizontal framing, door tops, light fixtures, register covers, tools, and the containment floor.</p><div class="table-scroll"><table class="data-table"><thead><tr><th>Readiness Area</th><th>Pass Standard</th><th>Fail Condition</th></tr></thead><tbody><tr><td>Visual surfaces</td><td>No visible mold, dust, debris, or loose residue</td><td>Any visible settled dust or residue</td></tr><tr><td>Moisture</td><td>Drying target met and documented</td><td>Elevated readings remain unexplained</td></tr><tr><td>Containment</td><td>Negative pressure maintained until clearance protocol begins</td><td>Containment removed too early</td></tr><tr><td>Documentation</td><td>Photo log, readings, waste log, deviations complete</td><td>Missing evidence for key steps</td></tr></tbody></table></div><h3>Clearance Prep Packet</h3><div class="key-box"><ul><li>Signed SOW and amendments</li><li>Before, during, and after photo log</li><li>Moisture readings and drying notes</li><li>Containment pressure records</li><li>Waste handling notes</li><li>Materials removed and materials cleaned</li><li>Statement of readiness for independent clearance</li></ul></div><div class="warn-box"><div class="warn-label">Do Not Rush This</div><p>Removing containment before clearance strategy is complete can invalidate the work area control and create a dispute. Keep containment operational until the clearance plan says otherwise.</p></div><h3>Hands-On Activity: Fail the Room</h3><div class="insight"><div class="insight-label">Activity</div><p>The instructor describes or displays a nearly finished room with five hidden fail conditions. Students must identify each fail condition, explain why it matters, and state the corrective action before clearance sampling.</p></div></div>`},
+{module:5,modTitle:"Day 2 Business & Capstone",modColor:"var(--r400)",modIcon:"📋",title:"Client Communication, Pricing Boundaries & Change Orders",duration:"45 min",content:`<div class="lesson-header"><div class="mod-tag">Module 06 · Lesson 1 of 2</div><h1>Client Communication, Pricing Boundaries &amp; Change Orders</h1><div class="lesson-meta"><span class="badge badge-red">45 min</span><span class="badge badge-gray">Workforce Practice</span></div></div><div class="lesson-body"><p>Mold work often fails in the conversation before it fails in the field. Students need the language to explain why removal matters, why moisture correction comes first, why old materials trigger regulatory steps, and why discoveries outside the scope require a written change order.</p><h3>The Three Client Conversations</h3><div class="table-scroll"><table class="data-table"><thead><tr><th>Conversation</th><th>Plain-Language Message</th><th>Boundary</th></tr></thead><tbody><tr><td>Moisture source</td><td>We can clean the mold, but it returns if the water problem stays active.</td><td>No remediation without source plan.</td></tr><tr><td>Material removal</td><td>Some materials cannot be cleaned safely because mold grows into them.</td><td>Porous colonized material is removed.</td></tr><tr><td>New discovery</td><td>This was not in the signed scope; we need to document and update the plan.</td><td>No free extra work and no verbal expansion.</td></tr><tr><td>Clearance</td><td>An independent party verifies the area meets the clearance standard.</td><td>Do not self-clear your own remediation.</td></tr></tbody></table></div><h3>Change Order Anatomy</h3><div class="key-box"><ul><li>What changed: newly discovered area, material, hazard, or condition</li><li>Why it matters: safety, compliance, containment, cost, or schedule impact</li><li>What evidence supports it: photos, readings, lab result, visible condition</li><li>What action is proposed: stop, test, remove, expand containment, add equipment</li><li>What approval is required: client signature before work continues</li></ul></div><div class="warn-box"><div class="warn-label">Professional Boundary</div><p>A verbal "go ahead" is not a change order. If the work is not written, priced, and approved, it is not part of the job.</p></div><h3>Role-Play Activity</h3><div class="insight"><div class="insight-label">Activity</div><p>One student plays the client who wants the crew to "just spray it." One student plays the remediator. The remediator must explain removal-first practice, moisture correction, and written scope boundaries in under two minutes without sounding defensive.</p></div></div>`},
+{module:5,modTitle:"Day 2 Business & Capstone",modColor:"var(--r400)",modIcon:"📋",title:"Capstone: Build a Defensible Mold Remediation Plan",duration:"45 min",content:`<div class="lesson-header"><div class="mod-tag">Module 06 · Lesson 2 of 2</div><h1>Capstone: Build a Defensible Mold Remediation Plan</h1><div class="lesson-meta"><span class="badge badge-red">45 min</span><span class="badge badge-green">Practical Assessment</span></div></div><div class="lesson-body"><p>The capstone ties the two-day class together. Students act as a small remediation planning team and produce a defensible plan from a realistic building scenario. The goal is not memorization; the goal is professional judgment under constraints.</p><h3>Scenario</h3><p>A 1960 single-family home has chronic bathroom wall moisture, visible mold on paper-faced drywall, a musty odor near the hallway return, suspected vinyl floor tile, and a client who wants the work finished quickly before a tenant moves in.</p><h3>Team Deliverables</h3><ol><li><strong>Hazard screen:</strong> identify lead, asbestos, electrical, occupant, and HVAC concerns.</li><li><strong>Assessment plan:</strong> moisture mapping, photos, sampling decisions, and source confirmation.</li><li><strong>Containment plan:</strong> work boundary, decon path, NAM placement, exhaust route, pressure target.</li><li><strong>Work sequence:</strong> material removal, HEPA vacuuming, damp wiping, waste handling, final cleaning.</li><li><strong>Documentation packet:</strong> SOW notes, change-order triggers, photo list, clearance criteria.</li><li><strong>Client explanation:</strong> plain-language summary of the plan and why it protects the property.</li></ol><div class="table-scroll"><table class="data-table"><thead><tr><th>Scoring Area</th><th>Meets Standard</th></tr></thead><tbody><tr><td>Safety and compliance</td><td>Identifies pre-1978 lead and asbestos-risk triggers before disturbance</td></tr><tr><td>Moisture logic</td><td>Requires source correction before final remediation completion</td></tr><tr><td>Engineering control</td><td>Uses containment, exterior exhaust, and pressure verification</td></tr><tr><td>Removal decision</td><td>Removes porous colonized material and cleans salvageable surfaces</td></tr><tr><td>Documentation</td><td>Produces records that support clearance and client communication</td></tr></tbody></table></div><div class="insight"><div class="insight-label">Instructor Closeout</div><p>End the capstone by asking each team: "What would make you stop work?" Students who can answer that clearly are ready to think like professionals.</p></div></div>`}
+);
 
 const EXAM_QUESTIONS=[
 {q:"Which accurately describes why physical removal is preferred over biocide application?",options:["Biocides are more expensive","Dead mold spores retain allergenic proteins and mycotoxins that physical removal eliminates","Physical removal is required by EPA for all commercial buildings","Biocides cannot be purchased without a pesticide license"],correct:1,explanation:"Dead mold spores retain structurally stable allergenic proteins and mycotoxins. Biocides may render spores non-viable but do not remove these hazardous structures."},
@@ -823,6 +813,20 @@ const EXAM_QUESTIONS=[
 {q:"From a professional liability standpoint, what is the PRIMARY protection against claims from a mold remediation job?",options:["General liability insurance with mold exclusion removed","Thorough, timestamped documentation from initial assessment through final clearance letter","A signed client waiver of liability","Membership in a professional remediation association"],correct:1,explanation:"Comprehensive, timestamped documentation — assessment records, SOW, photo logs, sampling chain of custody, lab reports, and clearance letter — is the primary professional protection."}
 ];
 
+
+EXAM_QUESTIONS.push(
+{q:"Which Day 2 action should happen before tools enter the work area?",options:["Begin demolition to expose the full problem","Hold an arrival briefing covering scope, hazards, roles, clean path, dirty path, and stop-work triggers","Ask the client to inspect the containment after work begins","Run the negative air machine only after removal is complete"],correct:1,explanation:"The arrival briefing aligns the crew before disturbance begins and sets the safety, documentation, and stop-work expectations."},
+{q:"A containment pressure reading of 0.00 in. w.c. means what?",options:["Containment is acceptable because pressure is neutral","There is no verified pressure control and the system must be corrected before disturbance","The negative air machine is too strong","The room is ready for clearance"],correct:1,explanation:"A 0.00 reading proves no measurable negative pressure. The crew must correct equipment, ducting, or leaks before disturbing materials."},
+{q:"Which route is acceptable for negative air machine exhaust during mold remediation?",options:["An HVAC return grille","An attic with roof vents","A garage connected to the home","Directly outdoors through a sealed window insert or exterior penetration"],correct:3,explanation:"NAM exhaust must terminate outdoors through a sealed route. Interior exhaust can redistribute contamination."},
+{q:"During removal work, why are waste bags wiped before leaving containment?",options:["To make them easier to carry","To reduce transfer of contaminated dust into the decon path and clean zone","To satisfy a cosmetic requirement only","To remove the need for double bagging"],correct:1,explanation:"Bag exteriors can carry settled dust and debris. Wiping them helps prevent cross-contamination."},
+{q:"Which condition means a remediated area is NOT ready for clearance?",options:["No visible debris remains","Moisture readings are documented at target","Containment pressure was maintained","Elevated moisture remains unexplained"],correct:3,explanation:"Unexplained elevated moisture means the growth condition may still exist. The area is not ready for clearance."},
+{q:"What should happen when a crew discovers mold outside the signed scope?",options:["Keep working and add it to the invoice later","Stop, document, notify the client, and obtain a written scope amendment","Ask the client verbally and continue","Ignore it if the original area is nearly complete"],correct:1,explanation:"New scope requires documentation, client notification, and written approval before additional work."},
+{q:"In a 1960 home, which pre-work concern must be addressed before cutting painted drywall or suspect floor tile?",options:["Only the mold species must be identified","Lead and asbestos triggers must be screened before disturbance","The client must buy new flooring first","No extra step is needed for single-family homes"],correct:1,explanation:"A 1960 home falls within the pre-1978 lead trigger and the asbestos risk window for suspect materials."},
+{q:"Which item belongs in a clearance prep packet?",options:["Only the final invoice","Before/during/after photos, moisture readings, pressure records, waste notes, and readiness statement","A verbal summary from the crew lead","A warranty statement without field records"],correct:1,explanation:"Clearance prep requires a documented record showing what was found, controlled, removed, cleaned, and verified."},
+{q:"What is the strongest professional boundary around change orders?",options:["A verbal go-ahead is enough if the client is present","If work is not written, priced, and approved, it is not part of the job","Change orders are only needed for jobs over 100 sq ft","The crew can decide scope changes at the end of the day"],correct:1,explanation:"Written, priced, approved change orders protect the client and contractor when conditions change."},
+{q:"What is the purpose of the Day 2 capstone exercise?",options:["To memorize mold species names","To build a defensible remediation plan using safety, moisture, containment, removal, documentation, and client communication decisions","To replace the final exam","To practice selling biocide treatments"],correct:1,explanation:"The capstone checks whether students can apply the full two-day workflow to a realistic job scenario."}
+);
+
 const MODULE_QUIZZES=[
 {module:0,title:"Module 1 Quiz — Green Remediation",questions:[
 {q:"What is the first step in the physical removal sequence for any mold-contaminated surface?",options:["Damp wipe with surfactant","Biocide application","HEPA vacuuming","Apply negative air pressure"],correct:2,explanation:"HEPA vacuuming always comes first to capture bulk spores and debris before any wet methods."},
@@ -848,6 +852,31 @@ const MODULE_QUIZZES=[
 ];
 
 // ═══════════════════════════════════════════════════════════════════
+
+MODULE_QUIZZES.push(
+{module:3,title:"Module 4 Quiz - Day 2 Field Operations",questions:[
+{q:"What is the purpose of the arrival briefing?",options:["To replace the written SOW","To align scope, hazards, roles, movement paths, and stop-work triggers before disturbance","To let the client choose tools","To avoid taking baseline photos"],correct:1,explanation:"The arrival briefing makes sure the crew starts from the same scope, hazards, roles, and controls."},
+{q:"Which three-zone map should a crew establish?",options:["Wet, dry, and unknown zones","Work zone, decon path, and clean zone","Kitchen, bath, and hallway zones","Interior, exterior, and attic zones"],correct:1,explanation:"Professional setup separates the contaminated work zone, controlled decon path, and clean zone."},
+{q:"What pressure range is typically acceptable for containment?",options:["+0.02 to +0.05 in. w.c.","0.00 in. w.c.","-0.02 to -0.05 in. w.c.","-0.50 to -1.00 in. w.c."],correct:2,explanation:"The usual containment target is -0.02 to -0.05 inches water column."},
+{q:"Which condition requires stopping before first cut?",options:["A missing roll of painter tape","Suspect asbestos-containing material in the planned disturbance area","A client asking a question","A full camera battery"],correct:1,explanation:"Suspect asbestos-containing material is a stop-work trigger until it is properly assessed."},
+{q:"What proves containment is working?",options:["Plastic is visible from the hallway","The NAM is plugged in","Inward air movement and documented negative pressure","The crew says it feels clean"],correct:2,explanation:"Containment must be verified by inward air movement and pressure readings."}
+]},
+{module:4,title:"Module 5 Quiz - Remediation Workflow",questions:[
+{q:"What is the correct general production sequence?",options:["Spray, wait, demolish, invoice","Isolate, document, remove, clean, package waste, final clean, verify","Demolish first and plan later","Clearance sample before cleaning"],correct:1,explanation:"The workflow must isolate and document before removal, then clean and verify before clearance."},
+{q:"Which material decision is correct?",options:["Visible mold on paper-faced drywall should be cleaned in place","Insulation can be damp wiped","Visible mold on paper-faced drywall should be removed","All framing must always be removed"],correct:2,explanation:"Colonized porous paper-faced drywall is removed rather than cleaned in place."},
+{q:"What does final cleaning focus on?",options:["Only the center of the room","Dust ledges, folds, fasteners, horizontal surfaces, tools, and containment floor","Only areas visible to the client","Only wet materials"],correct:1,explanation:"Final cleaning targets the small dust and residue reservoirs that cause clearance failures."},
+{q:"Which condition fails clearance readiness?",options:["No visible dust remains","Drying target is documented","Containment is still operating","Containment was removed before clearance strategy was complete"],correct:3,explanation:"Removing containment too early can undermine control and create a defensibility problem."},
+{q:"Why should final readiness be documented?",options:["To make the file larger","To support independent clearance and defend the work if questioned","To avoid needing photos","To replace source correction"],correct:1,explanation:"Readiness documentation supports clearance and protects against disputes."}
+]},
+{module:5,title:"Module 6 Quiz - Business & Capstone",questions:[
+{q:"What is the correct response to a client asking the crew to 'just spray it'?",options:["Agree if they sign a waiver","Explain that professional remediation physically removes mold and requires moisture correction","Use a stronger chemical","Skip containment"],correct:1,explanation:"The client needs a plain-language explanation of removal-first practice and moisture correction."},
+{q:"What is a valid change order boundary?",options:["Verbal approval is enough","Written, priced, and approved before added work continues","Only the crew lead needs to approve","Change orders happen after final payment"],correct:1,explanation:"Change orders must be documented, priced, and approved before scope expands."},
+{q:"Which deliverable belongs in the capstone plan?",options:["A promise to finish regardless of hazards","Hazard screen, moisture plan, containment plan, work sequence, documentation, and client explanation","A biocide-only plan","A final invoice only"],correct:1,explanation:"The capstone plan integrates technical, safety, documentation, and communication skills."},
+{q:"Why should independent clearance be explained to the client?",options:["It proves the contractor is not responsible","It provides neutral verification of the work area after remediation","It lets the client avoid documentation","It is only for commercial buildings"],correct:1,explanation:"Independent clearance provides neutral verification and avoids a conflict of interest."},
+{q:"What question should students be able to answer at the end of the capstone?",options:["What would make you stop work?","How fast can you remove all drywall?","Which chemical smells strongest?","Can you skip documentation if the client trusts you?"],correct:0,explanation:"Knowing when to stop work shows professional judgment and risk awareness."}
+]}
+);
+
 // STATE
 // ═══════════════════════════════════════════════════════════════════
 const state={
@@ -896,6 +925,7 @@ function showScreen(id){
 
 function goHome(){
   narratorStop();
+  renderCourseModules();
   updateDashboardLists();
   updateCourseProgressBar();
   loadStudentDash();
@@ -911,8 +941,9 @@ function updateTopNav(){
   document.getElementById('topProgressFill').style.width=pct+'%';
   document.getElementById('topProgressLabel').textContent=state.completedLessons.size+' of '+LESSONS.length;
   const cur=LESSONS[state.currentLesson];
+  const pos=getModulePosition(state.currentLesson);
   document.getElementById('topnavMeta').innerHTML=
-    `<div style="font-family:var(--mono);font-size:10px;color:var(--t500)">Mod ${cur.module+1} · L${(state.currentLesson%4)+1}/4</div>`;
+    `<div style="font-family:var(--mono);font-size:10px;color:var(--t500)">Mod ${cur.module+1} · L${pos.position}/${pos.total}</div>`;
 }
 
 function updateCourseProgressBar(){
@@ -1073,14 +1104,14 @@ async function lookupReturningStudent(){
   window._returningStudentData={name, classId, classData, progress, exams};
 
   // Build status card
-  const pct=Math.round((lessonsComplete/12)*100);
+  const pct=Math.round((lessonsComplete/LESSONS.length)*100);
   statusEl.style.background='rgba(34,197,94,0.06)';
   statusEl.style.border='1px solid var(--border-g)';
   statusEl.style.color='var(--t300)';
   statusEl.innerHTML=`
     <div style="font-weight:700;color:var(--t100);margin-bottom:8px">✓ Account found — ${name}</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-family:var(--mono);font-size:11px">
-      <div>Lessons complete: <span style="color:var(--g400);font-weight:700">${lessonsComplete}/12</span></div>
+      <div>Lessons complete: <span style="color:var(--g400);font-weight:700">${lessonsComplete}/${LESSONS.length}</span></div>
       <div>Progress: <span style="color:var(--g400);font-weight:700">${pct}%</span></div>
       <div>Exams taken: <span style="color:var(--t200);font-weight:700">${exams.length}</span></div>
       ${bestExam?`<div>Best score: <span style="color:${bestExam.passed?'var(--g400)':'var(--a400)'};font-weight:700">${bestExam.pct}% ${bestExam.passed?'✓ PASS':'FAIL'}</span></div>`:'<div></div>'}
@@ -1483,6 +1514,34 @@ function openManualResultEditor(encodedName, email, classId, classNumber, classN
 function goToLesson(idx){renderLesson(idx);showScreen('screen-lesson');}
 function resumeCourse(){goToLesson(state.currentLesson);}
 
+function getModuleNumbers(){
+  return [...new Set(LESSONS.map(l=>l.module))].sort((a,b)=>a-b);
+}
+function getModuleLessons(moduleNum){
+  return LESSONS.map((lesson,index)=>({lesson,index})).filter(item=>item.lesson.module===moduleNum);
+}
+function getModuleStartIndex(moduleNum){
+  const first=getModuleLessons(moduleNum)[0];
+  return first?first.index:0;
+}
+function getModulePosition(index){
+  const moduleNum=LESSONS[index]?.module||0;
+  const lessons=getModuleLessons(moduleNum);
+  return {moduleNum,position:lessons.findIndex(item=>item.index===index)+1,total:lessons.length};
+}
+function isLastLessonInModule(index){
+  const pos=getModulePosition(index);
+  return pos.position===pos.total;
+}
+function getNextModuleStartIndex(moduleNum){
+  const modules=getModuleNumbers();
+  const nextModule=modules[modules.indexOf(moduleNum)+1];
+  return nextModule===undefined?null:getModuleStartIndex(nextModule);
+}
+function getBadgeClass(moduleNum){
+  return ['badge-green','badge-amber','badge-red','badge-green','badge-amber','badge-red'][moduleNum]||'badge-gray';
+}
+
 function renderLesson(index){
   state.currentLesson=index;
   const prevDone=state.completedLessons.size;
@@ -1490,18 +1549,19 @@ function renderLesson(index){
   narratorStop();
   // Sidebar
   let sHTML='';
-  [0,1,2].forEach(m=>{
-    const col=m===0?'var(--g500)':m===1?'var(--a400)':'var(--r400)';
+  getModuleNumbers().forEach(m=>{
+    const first=LESSONS[getModuleStartIndex(m)];
+    const col=first?.modColor||'var(--g500)';
     sHTML+=`<div class="sidebar-module"><div class="sidebar-mod-title" style="color:${col}">Module ${m+1}</div>`;
-    for(let l=0;l<4;l++){
-      const li=m*4+l,done=state.completedLessons.has(li),active=li===index;
-      sHTML+=`<button class="sidebar-lesson${done?' done':''}${active?' active':''}" onclick="renderLesson(${li});closeSidebar()"><span class="sl-dot"></span>${LESSONS[li].title}</button>`;
-    }
+    getModuleLessons(m).forEach(item=>{
+      const li=item.index,done=state.completedLessons.has(li),active=li===index;
+      sHTML+=`<button class="sidebar-lesson${done?' done':''}${active?' active':''}" onclick="renderLesson(${li});closeSidebar()"><span class="sl-dot"></span>${item.lesson.title}</button>`;
+    });
     sHTML+='</div>';
   });
   document.getElementById('sidebar-content').innerHTML=sHTML;
   document.getElementById('lesson-content').innerHTML=LESSONS[index].content;
-  const isFirst=index===0,isLastInMod=(index%4)===3;
+  const isFirst=index===0,isLastInMod=isLastLessonInModule(index);
   const nextLabel=isLastInMod?'Module Quiz →':'Next Lesson →';
   const prevBtn=document.getElementById('btn-prev');const nextBtn=document.getElementById('btn-next');
   if(prevBtn){prevBtn.disabled=isFirst;prevBtn.style.opacity=isFirst?'0.3':'1';}
@@ -1513,9 +1573,8 @@ function renderLesson(index){
   if(mobCtr) mobCtr.textContent=`${index+1}/${LESSONS.length}`;
   // Module completion toast
   if(isLastInMod&&state.completedLessons.size>prevDone){
-    const modNum=Math.floor(index/4)+1;
-    const modNames=['Green Remediation','Investigative Assessment','Safety & Legal'];
-    if([3,7,11].includes(index)) showToast(`🎉 Module ${modNum} complete — ${modNames[modNum-1]}!`,4000);
+    const modNum=LESSONS[index].module+1;
+    showToast(`🎉 Module ${modNum} complete — ${LESSONS[index].modTitle}!`,4000);
   }
   updateTopNav();updateNarratorBtns();
   document.getElementById('reading-progress-fill').style.width='0%';
@@ -1524,18 +1583,36 @@ function renderLesson(index){
 }
 
 function nextLesson(){
-  const i=state.currentLesson,isLastInMod=(i%4)===3;
-  if(isLastInMod){renderQuiz(Math.floor(i/4));showScreen('screen-quiz');}
-  else renderLesson(i+1);
+  const i=state.currentLesson;
+  if(isLastLessonInModule(i)){renderQuiz(LESSONS[i].module);showScreen('screen-quiz');}
+  else if(i<LESSONS.length-1) renderLesson(i+1);
 }
 function prevLesson(){if(state.currentLesson>0)renderLesson(state.currentLesson-1);}
 function toggleSidebar(){document.getElementById('lesson-sidebar').classList.toggle('open');document.getElementById('sidebar-overlay').classList.toggle('show');}
 function closeSidebar(){document.getElementById('lesson-sidebar')?.classList.remove('open');document.getElementById('sidebar-overlay')?.classList.remove('show');}
 function updateDashboardLists(){
-  for(let m=0;m<3;m++){
-    const list=document.getElementById('mod'+m+'-list');if(!list)continue;
-    list.querySelectorAll('li').forEach((li,i)=>{state.completedLessons.has(m*4+i)?li.classList.add('done'):li.classList.remove('done');});
-  }
+  renderCourseModules();
+  getModuleNumbers().forEach(m=>{
+    const list=document.getElementById('mod'+m+'-list');if(!list)return;
+    const lessons=getModuleLessons(m);
+    list.querySelectorAll('li').forEach((li,i)=>{state.completedLessons.has(lessons[i]?.index)?li.classList.add('done'):li.classList.remove('done');});
+  });
+}
+
+function renderCourseModules(){
+  const grid=document.getElementById('course-modules-grid');if(!grid)return;
+  grid.innerHTML=getModuleNumbers().map((m,idx)=>{
+    const lessons=getModuleLessons(m);
+    const first=lessons[0]?.lesson||{};
+    const minutes=lessons.reduce((sum,item)=>sum+(parseInt(item.lesson.duration,10)||0),0);
+    return `<div class="mod-card fade-in d${Math.min(idx+1,5)}" onclick="goToLesson(${lessons[0].index})">
+      <div class="mod-card-top">
+        <div class="mod-icon" style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25)">${first.modIcon||'📘'}</div>
+        <div><div style="font-family:var(--mono);font-size:10px;color:${first.modColor||'var(--g500)'};letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px">Module ${String(m+1).padStart(2,'0')}</div><div style="font-size:14px;font-weight:600;color:var(--t100)">${first.modTitle||'Module'}</div><div style="font-size:12px;color:var(--t500);margin-top:2px">${lessons.length} lesson${lessons.length!==1?'s':''} · ~${minutes} min</div></div>
+      </div>
+      <div class="mod-body"><ul class="mod-lessons-list" id="mod${m}-list">${lessons.map(item=>`<li>${item.lesson.title}</li>`).join('')}</ul></div>
+    </div>`;
+  }).join('');
 }
 
 // Keyboard navigation
@@ -1555,7 +1632,7 @@ window.addEventListener('scroll',()=>{
 // ═══════════════════════════════════════════════════════════════════
 function renderDownloads(){
   const grid=document.getElementById('downloads-grid');if(!grid)return;
-  grid.innerHTML=DOWNLOADS.map(d=>`<div class="dl-card" data-dlurl="${d.url}" data-dlname="${d.name.replace(/"/g,'&quot;')}">
+  grid.innerHTML=DOWNLOADS.map((d,i)=>`<div class="dl-card" data-dlidx="${i}" data-dlurl="${d.url||''}" data-dlname="${d.name.replace(/"/g,'&quot;')}">
     <div class="dl-icon">${d.icon}</div>
     <div><div class="dl-type">${d.type}</div><div class="dl-name">${d.name}</div><div class="dl-desc">${d.desc}</div></div>
   </div>`).join('');
@@ -1564,14 +1641,16 @@ function renderDownloads(){
     if(!card)return;
     const url=card.dataset.dlurl;
     const name=card.dataset.dlname;
+    const item=DOWNLOADS[Number(card.dataset.dlidx)];
     const a=document.createElement('a');
-    a.href=url;
-    a.download=name+'.pdf';
+    a.href=url||URL.createObjectURL(new Blob([item.content||''],{type:'text/plain'}));
+    a.download=name+(url?'.pdf':'.txt');
     a.target='_blank';
     a.rel='noopener noreferrer';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+    if(!url) setTimeout(()=>URL.revokeObjectURL(a.href),1000);
   });
 }
 
@@ -1580,8 +1659,9 @@ function renderDownloads(){
 // ═══════════════════════════════════════════════════════════════════
 function renderQuiz(moduleNum){
   const quiz=MODULE_QUIZZES[moduleNum];window._quizAnswers={};
-  const badgeCls=moduleNum===0?'badge-green':moduleNum===1?'badge-amber':'badge-red';
-  let html=`<button class="btn btn-ghost" onclick="goToLesson(${moduleNum*4})" style="margin-bottom:28px">← Back to Module ${moduleNum+1}</button>
+  const badgeCls=getBadgeClass(moduleNum);
+  const moduleStart=getModuleStartIndex(moduleNum);
+  let html=`<button class="btn btn-ghost" onclick="goToLesson(${moduleStart})" style="margin-bottom:28px">← Back to Module ${moduleNum+1}</button>
   <div style="margin-bottom:28px"><div class="badge ${badgeCls}" style="margin-bottom:10px">Module ${moduleNum+1} Quiz</div>
   <h2 style="font-size:clamp(1.3rem,3vw,1.8rem);color:var(--t100);margin-bottom:6px">${quiz.title}</h2>
   <p style="font-size:13px;color:var(--t400)">5 questions. Select your answer, then submit.</p></div><div id="quiz-questions">`;
@@ -1590,8 +1670,9 @@ function renderQuiz(moduleNum){
     q.options.forEach((opt,oi)=>{html+=`<div class="option" onclick="selectQuizOption(${qi},${oi},this)" id="qq-${qi}-opt-${oi}"><span class="opt-letter">${String.fromCharCode(65+oi)}</span>${opt}</div>`;});
     html+=`</div><div class="q-feedback" id="qq-fb-${qi}"></div></div>`;
   });
-  const nextLabel=moduleNum<2?'Next Module →':'Go to Final Exam →';
-  const nextAction=moduleNum<2?`goToLesson(${(moduleNum+1)*4})`:`goToExam()`;
+  const nextModuleStart=getNextModuleStartIndex(moduleNum);
+  const nextLabel=nextModuleStart!==null?'Next Module →':'Go to Final Exam →';
+  const nextAction=nextModuleStart!==null?`goToLesson(${nextModuleStart})`:`goToExam()`;
   html+=`</div><div style="margin-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
   <div id="quiz-score-msg" style="font-family:var(--mono);font-size:12px;color:var(--t500)"></div>
   <div style="display:flex;gap:12px">
@@ -1655,7 +1736,7 @@ async function renderExam(){
   let html=`<div style="margin-bottom:28px">
   <div class="badge badge-green" style="margin-bottom:10px">📝 Final Certification Exam</div>
   <h2 style="font-size:clamp(1.3rem,3vw,2rem);color:var(--t100);margin-bottom:8px">Comprehensive Knowledge Assessment</h2>
-  <p style="font-size:13px;color:var(--t400);margin-bottom:16px">30 questions covering all three modules. Score 75% or higher (23/30) to earn your certificate.</p>
+  <p style="font-size:13px;color:var(--t400);margin-bottom:16px">${EXAM_QUESTIONS.length} questions covering all six modules. Score 75% or higher (${Math.ceil(EXAM_QUESTIONS.length*0.75)}/${EXAM_QUESTIONS.length}) to earn your certificate.</p>
   <div style="background:var(--bg3);border:1px solid var(--border-g);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
     <div><div style="font-size:13px;color:var(--t300);margin-bottom:4px">📋 Enrolled as: <strong style="color:var(--g400)">${state.studentName||'Unknown'}</strong></div>
     <div style="font-size:12px;color:var(--t500);font-family:var(--mono)">Class: ${state.currentClass?.number||'N/A'} — ${state.currentClass?.name||'Self-Study'}</div></div>
@@ -1667,7 +1748,7 @@ async function renderExam(){
     html+=`</div><div class="q-feedback" id="eq-fb-${qi}"></div></div>`;
   });
   html+=`</div><div style="margin-top:28px;padding:20px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius)">
-  <div style="font-family:var(--mono);font-size:12px;color:var(--t500);margin-bottom:12px" id="exam-progress-msg">Answer all 30 questions, then submit.</div>
+  <div style="font-family:var(--mono);font-size:12px;color:var(--t500);margin-bottom:12px" id="exam-progress-msg">Answer all ${EXAM_QUESTIONS.length} questions, then submit.</div>
   <button class="btn btn-primary" onclick="submitExam()" style="padding:14px 28px;font-size:13px">Submit Exam &amp; See Results</button>
   </div>`;
   document.getElementById('exam-content').innerHTML=html;
@@ -1837,7 +1918,7 @@ function buildCertPreviewHTML(){
     <div class="c-div"></div>
     <div class="c-by">This certifies that</div>
     <div class="c-name">${cert.name}</div>
-    <div class="c-desc">has successfully completed all three modules and passed the<br>comprehensive final examination with a score of</div>
+    <div class="c-desc">has successfully completed the full six-module, two-day course and passed the<br>comprehensive final examination with a score of</div>
     <div class="c-score">${cert.pct}% <span style="font-size:1.2rem;color:#64748b">(${cert.score}/${cert.total})</span></div>
     <div class="c-meta">
       <div><div class="c-meta-label">Date Issued</div><div class="c-meta-val">${cert.today}</div></div>
@@ -1929,7 +2010,7 @@ function printCertificateLegacy(){
   <div class="divider"></div>
   <div class="certifies">This certifies that</div>
   <div class="student-name">${name}</div>
-  <div class="desc">has successfully completed all three modules and passed the comprehensive final examination with a score of</div>
+  <div class="desc">has successfully completed the full six-module, two-day course and passed the comprehensive final examination with a score of</div>
   <div class="big-score">${pct}% <span style="font-size:1.3rem;color:#64748b">(${score}/${total})</span></div>
   <div class="meta-grid">
     <div><div class="meta-label">Date Issued</div><div class="meta-val">${today}</div></div>
@@ -1993,7 +2074,7 @@ async function printCertificate(){
   <div class="divider"></div>
   <div class="certifies">This certifies that</div>
   <div class="student-name">${name}</div>
-  <div class="desc">has successfully completed all three modules and passed the comprehensive final examination with a score of</div>
+  <div class="desc">has successfully completed the full six-module, two-day course and passed the comprehensive final examination with a score of</div>
   <div class="big-score">${pct}% <span style="font-size:1.3rem;color:#64748b">(${score}/${total})</span></div>
   <div class="meta-grid">
     <div><div class="meta-label">Date Issued</div><div class="meta-val">${today}</div></div>
@@ -3087,10 +3168,10 @@ async function renderSettingsTab(el){
     <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:20px">
       <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--g500);margin-bottom:12px">📊 Course Info</div>
       <div style="font-size:13px;color:var(--t300);line-height:1.8">
-        <div>Modules: <strong style="color:var(--t100)">3</strong></div>
-        <div>Lessons: <strong style="color:var(--t100)">12</strong></div>
-        <div>Exam Questions: <strong style="color:var(--t100)">30</strong></div>
-        <div>Pass Threshold: <strong style="color:var(--t100)">75% (23/30)</strong></div>
+        <div>Modules: <strong style="color:var(--t100)">6</strong></div>
+        <div>Lessons: <strong style="color:var(--t100)">18</strong></div>
+        <div>Exam Questions: <strong style="color:var(--t100)">40</strong></div>
+        <div>Pass Threshold: <strong style="color:var(--t100)">75% (30/40)</strong></div>
         <div>Course Length: <strong style="color:var(--t100)">2 Days</strong></div>
         <div>CEU Hours: <strong style="color:var(--t100)">10.0</strong></div>
         <div>Cert Validity: <strong style="color:var(--t100)">2 Years</strong></div>
@@ -3353,7 +3434,7 @@ function buildCertPDF(data){
   // ── Description ──
   pdf.setFont('helvetica','normal'); pdf.setFontSize(9);
   pdf.setTextColor(71,85,105);
-  pdf.text('has successfully completed all three modules and passed the comprehensive final examination',cx,y,{align:'center'}); y+=11;
+  pdf.text('has successfully completed the full six-module, two-day course and passed the comprehensive final examination',cx,y,{align:'center'}); y+=11;
   pdf.text('with a score of',cx,y,{align:'center'}); y+=16;
 
   // ── Score ──
@@ -3568,6 +3649,7 @@ async function renderAnalyticsTab(el){
 window.addEventListener('DOMContentLoaded',()=>{
   loadTheme();
   loadLoginClasses();
+  renderCourseModules();
   renderDownloads();
   renderGlossary();
 });
