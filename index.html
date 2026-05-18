@@ -652,7 +652,7 @@ body.light-mode .toast{background:#fff;color:#16a34a}
 // SETUP: In Instructor Dashboard → Settings → paste Firebase URL
 // Firebase rules must be: { ".read": true, ".write": true }
 // ═══════════════════════════════════════════════════════════════════
-const SITE_FIREBASE_URL = ''; // Optional: set your Firebase Realtime Database URL here for all devices.
+const SITE_FIREBASE_URL = 'https://mold-101-default-rtdb.firebaseio.com'; // Optional: set your Firebase Realtime Database URL here for all devices.
 function normalizeFirebaseUrl(url){return (url||'').trim().replace(/\/+$/,'');}
 window._fbUrl = normalizeFirebaseUrl(localStorage.getItem('mold_firebase_url') || SITE_FIREBASE_URL) || null;
 
